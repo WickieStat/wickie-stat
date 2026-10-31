@@ -1,0 +1,768 @@
+<title>Wickie Stat Consultancy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>/* Wickie Stat Consultancy — design tokens & base styles */
+:root {
+  --ink: #0f1d2b;
+  --ink-2: #33475b;
+  --muted: #5f6f7f;
+  --paper: #f6f4ef;
+  --surface: #ffffff;
+  --surface-2: #eeebe4;
+  --line: #dcd7cc;
+  --accent: #0e7c6b;
+  --accent-ink: #ffffff;
+  --accent-soft: #d8efe9;
+  --signal: #d98f1e;
+  --danger: #b4372b;
+  --ok: #1d7a46;
+  --wa: #1f9d55;
+  --shadow: 0 1px 2px rgba(15, 29, 43, 0.06), 0 8px 28px rgba(15, 29, 43, 0.1);
+  --radius: 14px;
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-body: "Inter Tight", "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --maxw: 1160px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #e9eef2;
+    --ink-2: #c3ced8;
+    --muted: #93a2b0;
+    --paper: #0d1620;
+    --surface: #132130;
+    --surface-2: #182a3b;
+    --line: #26394c;
+    --accent: #3cc2a8;
+    --accent-ink: #062019;
+    --accent-soft: #123a35;
+    --signal: #f0b34e;
+    --danger: #ef7a6c;
+    --ok: #5ccf8c;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ink: #e9eef2; --ink-2: #c3ced8; --muted: #93a2b0; --paper: #0d1620; --surface: #132130; --surface-2: #182a3b;
+  --line: #26394c; --accent: #3cc2a8; --accent-ink: #062019; --accent-soft: #123a35; --signal: #f0b34e;
+  --danger: #ef7a6c; --ok: #5ccf8c; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 16px/1.6 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+img, svg { max-width: 100%; display: block; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { line-height: 1.15; margin: 0 0 0.5em; letter-spacing: -0.01em; }
+h1, h2 { font-family: var(--font-display); font-weight: 400; }
+h1 { font-size: clamp(2.5rem, 6vw, 4.4rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); }
+h3 { font-size: 1.12rem; font-weight: 600; }
+p { margin: 0 0 1em; }
+
+.wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 16px; }
+@media (min-width: 720px) { .wrap { padding: 0 28px; } }
+.section { padding: 72px 0; }
+.section.alt { background: var(--surface-2); }
+.eyebrow {
+  font: 500 0.75rem/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.eyebrow::before { content: ""; width: 18px; height: 1px; background: currentColor; }
+.lede { font-size: 1.15rem; color: var(--ink-2); max-width: 62ch; }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+.mono { font-family: var(--font-mono); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 46px; padding: 0 20px; border-radius: 999px;
+  font: 600 0.95rem/1 var(--font-body); text-decoration: none; cursor: pointer;
+  border: 1px solid transparent; transition: transform 0.15s, background 0.15s, border-color 0.15s;
+}
+.btn:hover { transform: translateY(-1px); text-decoration: none; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn-ghost:hover { border-color: var(--ink-2); }
+.btn-wa { background: var(--wa); color: #fff; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn[disabled] { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* Header */
+.site-header {
+  position: sticky; top: 0; z-index: 40;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; height: 66px; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 700; letter-spacing: -0.01em; }
+.brand-mark { width: 34px; height: 34px; border-radius: 9px; background: var(--ink); color: var(--paper); display: grid; place-items: center; font: 700 0.95rem/1 var(--font-mono); }
+.brand small { display: block; font: 500 0.68rem/1.2 var(--font-mono); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.nav { display: none; gap: 4px; align-items: center; }
+.nav a { color: var(--ink-2); text-decoration: none; padding: 8px 12px; border-radius: 8px; font-weight: 500; font-size: 0.95rem; }
+.nav a:hover, .nav a[aria-current="page"] { color: var(--ink); background: var(--surface-2); }
+.nav .btn { margin-left: 8px; min-height: 40px; color: var(--accent-ink); }
+.nav .btn:hover { background: var(--accent); }
+.menu-btn { background: none; border: 1px solid var(--line); border-radius: 10px; width: 44px; height: 44px; color: var(--ink); cursor: pointer; display: grid; place-items: center; }
+.mobile-nav { border-top: 1px solid var(--line); padding: 8px 16px 16px; display: grid; gap: 2px; background: var(--paper); }
+.mobile-nav a { padding: 12px 8px; color: var(--ink); text-decoration: none; font-weight: 500; border-bottom: 1px solid var(--line); }
+@media (min-width: 900px) { .nav { display: flex; } .menu-btn, .mobile-nav { display: none; } }
+
+/* Hero */
+.hero { padding: 64px 0 56px; position: relative; overflow: hidden; }
+.hero-grid { display: grid; gap: 40px; align-items: center; }
+@media (min-width: 960px) { .hero-grid { grid-template-columns: 1.15fr 0.85fr; } .hero { padding: 96px 0 88px; } }
+.hero h1 em { font-style: italic; color: var(--accent); }
+.hero-art { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); }
+.hero-art figcaption { font: 500 0.72rem/1.4 var(--font-mono); color: var(--muted); display: flex; justify-content: space-between; margin-top: 10px; }
+.trust-row { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 28px; color: var(--muted); font-size: 0.9rem; }
+.trust-row span { display: inline-flex; align-items: center; gap: 8px; }
+.trust-row span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--signal); }
+
+/* Cards & grids */
+.grid { display: grid; gap: 16px; }
+@media (min-width: 640px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 980px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } .grid-4 { grid-template-columns: repeat(4, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+.card h3 { margin-bottom: 6px; }
+.card p { color: var(--ink-2); font-size: 0.95rem; }
+.card-link { text-decoration: none; color: inherit; display: block; transition: border-color 0.15s, transform 0.15s; }
+.card-link:hover { border-color: var(--accent); transform: translateY(-2px); }
+.tag { display: inline-block; font: 500 0.72rem/1 var(--font-mono); padding: 5px 8px; border-radius: 6px; background: var(--surface-2); color: var(--ink-2); margin: 0 6px 6px 0; }
+.tag.accent { background: var(--accent-soft); color: var(--accent); }
+.cat-label { font: 500 0.72rem/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+/* Services detail */
+.service { display: grid; gap: 18px; padding: 32px 0; border-top: 1px solid var(--line); scroll-margin-top: 90px; }
+@media (min-width: 900px) { .service { grid-template-columns: 0.9fr 1.1fr; gap: 40px; } }
+.service ul { margin: 0; padding-left: 18px; color: var(--ink-2); }
+.service li { margin: 4px 0; }
+.service dl { display: grid; gap: 14px; margin: 0; }
+.service dt { font: 600 0.78rem/1 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.service dd { margin: 0; }
+
+/* Process */
+.steps { counter-reset: step; display: grid; gap: 14px; }
+@media (min-width: 980px) { .steps { grid-template-columns: repeat(5, 1fr); } }
+.step { position: relative; padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.step::before { counter-increment: step; content: "0" counter(step); font: 600 0.8rem/1 var(--font-mono); color: var(--accent); display: block; margin-bottom: 12px; }
+.step h3 { font-size: 1rem; }
+.step p { font-size: 0.9rem; color: var(--ink-2); margin: 0; }
+
+/* Tables */
+.table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.table td, .table th { text-align: left; padding: 12px 8px; border-bottom: 1px solid var(--line); }
+.table th { font: 600 0.75rem/1 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+
+/* Contact */
+.contact-list { display: grid; gap: 12px; }
+.contact-item { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; color: var(--ink); }
+a.contact-item:hover { border-color: var(--accent); }
+.contact-item .ico { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); flex: none; }
+.contact-item .ico.wa { background: color-mix(in srgb, var(--wa) 15%, transparent); color: var(--wa); }
+.contact-item b { display: block; }
+.contact-item span { color: var(--muted); font-size: 0.9rem; word-break: break-word; }
+
+/* Forms */
+.form { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 600; font-size: 0.9rem; }
+.field input, .field select, .field textarea {
+  width: 100%; font: inherit; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-height: 46px;
+}
+.field textarea { min-height: 130px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.field .err { color: var(--danger); font-size: 0.85rem; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 0.9rem; color: var(--ink-2); }
+.check input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.notice { padding: 14px 16px; border-radius: 10px; font-size: 0.95rem; }
+.notice.ok { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ink); border: 1px solid color-mix(in srgb, var(--ok) 40%, transparent); }
+.notice.err { background: color-mix(in srgb, var(--danger) 12%, transparent); color: var(--ink); border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent); }
+
+/* Footer */
+.site-footer { background: var(--ink); color: color-mix(in srgb, var(--paper) 80%, transparent); padding: 56px 0 120px; margin-top: 0; }
+:root[data-theme="dark"] .site-footer { background: #08111a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .site-footer { background: #08111a; color: #b7c3ce; } }
+.site-footer a { color: inherit; }
+.site-footer h4 { color: var(--paper); font: 600 0.78rem/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 14px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .site-footer h4 { color: #e9eef2; } }
+.footer-grid { display: grid; gap: 32px; }
+@media (min-width: 820px) { .footer-grid { grid-template-columns: 1.4fr 1fr 1fr; } }
+.footer-grid ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.footer-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.12); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
+
+/* Page hero */
+.page-hero { padding: 56px 0 24px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+/* Chat widget + floating WhatsApp */
+.fab-stack { position: fixed; right: 16px; bottom: 16px; z-index: 60; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+@media (min-width: 720px) { .fab-stack { right: 24px; bottom: 24px; } }
+
+.wa-fab, .chat-fab {
+  border: none; cursor: pointer; border-radius: 999px; display: grid; place-items: center;
+  box-shadow: var(--shadow); transition: transform 0.2s, opacity 0.2s;
+}
+.wa-fab { width: 50px; height: 50px; background: var(--wa); color: #fff; text-decoration: none; }
+.chat-fab { width: 62px; height: 62px; background: var(--ink); color: var(--paper); position: relative; }
+.wa-fab:hover, .chat-fab:hover { transform: scale(1.06); }
+.chat-fab .pulse { position: absolute; top: 6px; right: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--signal); border: 2px solid var(--ink); }
+.chat-fab-label {
+  position: absolute; right: 74px; top: 50%; transform: translateY(-50%); white-space: nowrap;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow);
+  padding: 8px 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 500; pointer-events: none;
+  animation: chat-fade-in 0.4s 1.2s both;
+}
+@media (max-width: 480px) { .chat-fab-label { display: none; } }
+
+.wa-menu { position: relative; }
+.wa-pop {
+  position: absolute; right: 60px; bottom: 0; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 12px; box-shadow: var(--shadow); padding: 6px; min-width: 220px; display: grid; gap: 2px;
+  animation: chat-fade-in 0.15s both;
+}
+.wa-pop a { display: block; padding: 10px 12px; border-radius: 8px; color: var(--ink); text-decoration: none; font-size: 0.9rem; }
+.wa-pop a:hover { background: var(--surface-2); }
+.wa-pop small { display: block; color: var(--muted); }
+
+/* Panel */
+.chat-panel {
+  position: fixed; z-index: 70; right: 16px; bottom: 16px;
+  width: min(400px, calc(100vw - 32px)); height: min(640px, calc(100dvh - 32px));
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(15, 29, 43, 0.28); display: flex; flex-direction: column; overflow: hidden;
+  transform-origin: bottom right; animation: chat-open 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+  transition: width 0.25s ease, height 0.25s ease;
+}
+@media (min-width: 720px) { .chat-panel { right: 24px; bottom: 24px; } }
+.chat-panel.closing { animation: chat-close 0.2s ease-in both; }
+.chat-panel.maximised { width: min(760px, calc(100vw - 32px)); height: min(860px, calc(100dvh - 32px)); }
+.chat-panel.minimised { height: 68px; }
+@media (max-width: 520px) {
+  .chat-panel:not(.minimised) { right: 0; bottom: 0; width: 100vw; height: 100dvh; border-radius: 0; border: none; }
+  .chat-panel.minimised { right: 8px; bottom: 8px; width: calc(100vw - 16px); }
+}
+
+.chat-head { display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 16px; background: var(--ink); color: var(--paper); flex: none; min-height: 68px; }
+:root[data-theme="dark"] .chat-head { background: #0a141d; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .chat-head { background: #0a141d; color: #e9eef2; } }
+.chat-avatar { width: 40px; height: 40px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font: 700 0.85rem/1 var(--font-mono); flex: none; position: relative; }
+.chat-avatar::after { content: ""; position: absolute; right: -2px; bottom: -2px; width: 11px; height: 11px; border-radius: 50%; background: #3ddc84; border: 2px solid var(--ink); }
+.chat-title { flex: 1; min-width: 0; }
+.chat-title b { display: block; font-size: 0.98rem; }
+.chat-title > span { display: block; font-size: 0.78rem; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.demo-chip { display: inline-block; margin-right: 2px; padding: 2px 7px; border-radius: 5px; background: var(--signal); color: #1d1405; font: 700 0.62rem/1.5 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; vertical-align: middle; }
+.chat-head button { background: transparent; border: none; color: inherit; width: 36px; height: 36px; border-radius: 9px; cursor: pointer; display: grid; place-items: center; opacity: 0.85; }
+.chat-head button:hover { background: rgba(255, 255, 255, 0.12); opacity: 1; }
+
+.chat-log { flex: 1; overflow-y: auto; padding: 18px 14px 8px; display: flex; flex-direction: column; gap: 12px; background: var(--paper); overscroll-behavior: contain; }
+.demo-note { font-size: 0.78rem; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; padding: 8px 10px; }
+.msg { max-width: 86%; display: flex; flex-direction: column; gap: 8px; animation: chat-msg-in 0.25s ease-out both; }
+.msg.user { align-self: flex-end; align-items: flex-end; }
+.bubble { padding: 10px 14px; border-radius: 16px; font-size: 0.93rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.msg.bot .bubble { background: var(--surface); border: 1px solid var(--line); border-bottom-left-radius: 5px; }
+.msg.user .bubble { background: var(--accent); color: var(--accent-ink); border-bottom-right-radius: 5px; }
+.msg.bot.error .bubble { border-color: color-mix(in srgb, var(--danger) 50%, transparent); }
+.msg.bot.success .bubble { border-color: color-mix(in srgb, var(--ok) 55%, transparent); background: color-mix(in srgb, var(--ok) 8%, var(--surface)); }
+.msg-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.msg-actions a, .msg-actions button {
+  font: 600 0.8rem/1 var(--font-body); padding: 9px 12px; border-radius: 999px; cursor: pointer; text-decoration: none;
+  border: 1px solid var(--accent); color: var(--accent); background: var(--surface);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.msg-actions .primary { background: var(--accent); color: var(--accent-ink); }
+.msg-actions .wa { border-color: var(--wa); color: var(--wa); }
+.msg-actions a:hover, .msg-actions button:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+.typing { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; border-bottom-left-radius: 5px; padding: 12px 14px; display: flex; gap: 4px; }
+.typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: chat-dot 1.2s infinite ease-in-out; }
+.typing i:nth-child(2) { animation-delay: 0.15s; }
+.typing i:nth-child(3) { animation-delay: 0.3s; }
+
+.review-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; font-size: 0.88rem; display: grid; gap: 10px; width: 100%; }
+.review-card dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; }
+.review-card dt { color: var(--muted); }
+.review-card dd { margin: 0; word-break: break-word; white-space: pre-wrap; }
+.review-card .check { font-size: 0.82rem; }
+.review-card .btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.review-card .btns button { font: 600 0.82rem/1 var(--font-body); padding: 10px 14px; border-radius: 999px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.review-card .btns .primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.review-card .btns button[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+.quick { flex: none; display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; background: var(--paper); border-top: 1px solid var(--line); scrollbar-width: thin; }
+.quick.wrap-q { flex-wrap: wrap; max-height: 132px; overflow-y: auto; }
+.quick button { flex: none; font: 500 0.8rem/1 var(--font-body); padding: 9px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.quick button:hover { border-color: var(--accent); color: var(--accent); }
+
+.chat-input { flex: none; display: flex; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid var(--line); background: var(--surface); }
+.chat-input textarea {
+  flex: 1; resize: none; font: inherit; font-size: 16px; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; min-height: 44px; max-height: 120px; line-height: 1.4;
+}
+.chat-input textarea:focus { outline: none; border-color: var(--accent); }
+.chat-input button { width: 44px; height: 44px; flex: none; border-radius: 12px; border: none; background: var(--accent); color: var(--accent-ink); cursor: pointer; display: grid; place-items: center; }
+.chat-input button[disabled] { opacity: 0.45; cursor: not-allowed; }
+.chat-foot { flex: none; font-size: 0.7rem; color: var(--muted); text-align: center; padding: 0 12px 8px; background: var(--surface); }
+.chat-foot a { color: inherit; }
+.inline-err { color: var(--danger); font-size: 0.8rem; padding: 0 14px 6px; background: var(--surface); }
+
+@keyframes chat-open { from { opacity: 0; transform: translateY(16px) scale(0.92); } to { opacity: 1; transform: none; } }
+@keyframes chat-close { to { opacity: 0; transform: translateY(16px) scale(0.92); } }
+@keyframes chat-msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes chat-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes chat-dot { 0%, 80%, 100% { transform: translateY(0); opacity: 0.5; } 40% { transform: translateY(-4px); opacity: 1; } }
+
+.preview-bar { background: var(--signal); color: #1d1405; font-size: 0.82rem; text-align: center; padding-block: 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 50; background: var(--paper); }
+.site-header { top: env(safe-area-inset-top, 0px); }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+@media (min-width: 720px) { .wrap { padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: max(28px, env(safe-area-inset-right, 0px)); } }
+h1, h2 { text-wrap: balance; }
+section[id] { scroll-margin-top: 80px; }
+.ci-body { min-width: 0; flex: 1; color: inherit; }
+.sel { user-select: all; }
+.copy-btn { font: 600 0.8rem/1 var(--font-body); padding: 9px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+.contact-item.pending { opacity: 0.72; }
+.fab-stack { right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+@media (min-width: 720px) { .fab-stack { right: calc(24px + env(safe-area-inset-right, 0px)); bottom: calc(24px + env(safe-area-inset-bottom, 0px)); } }
+.chat-panel { right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+@media (min-width: 720px) { .chat-panel { right: calc(24px + env(safe-area-inset-right, 0px)); bottom: calc(24px + env(safe-area-inset-bottom, 0px)); } }
+@media (max-width: 520px) { .chat-panel:not(.minimised) { right: 0; bottom: 0; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); } }
+.chat-panel[hidden], .chat-fab[hidden] { display: none !important; }
+.msg-actions .wa-solid { background: var(--wa); color: #fff; border-color: var(--wa); }
+.quick[hidden] { display: none !important; }
+.faq-grid details summary { cursor: pointer; font-weight: 600; }
+.faq-grid details p { margin: 10px 0 0; }
+.privacy { max-width: 760px; }
+.privacy h3 { margin-top: 1.4em; }
+.grid > * { min-width: 0; }
+</style>
+<div class="preview-bar" role="note"><b>Website preview.</b> The chatbot runs in demo mode here, and enquiries open WhatsApp rather than submitting online.</div>
+<header class="site-header" id="top"><div class="wrap">
+  <a href="#top" class="brand" aria-label="Wickie Stat Consultancy home"><span class="brand-mark">WS</span><span>Wickie Stat<small>Consultancy</small></span></a>
+  <nav class="nav" aria-label="Main"><a href="#services">Services</a><a href="#portfolio">Portfolio</a><a href="#about">About</a><a href="#contact">Contact</a><a href="#enquiry" class="btn btn-primary">Request a quote</a></nav>
+  <a class="menu-btn" href="#contact" aria-label="Contact"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></a>
+</div></header>
+<main>
+<section class="hero"><div class="wrap hero-grid">
+  <div>
+    <p class="eyebrow">Data science · Research analytics · AI · Quant finance</p>
+    <h1>Turning data into <em>intelligence.</em> Transforming research into impact.</h1>
+    <p class="lede">Wickie Stat Consultancy helps researchers, postgraduate students, businesses and institutions turn complex data into clear, defensible insight, with rigorous statistics, clean code and practical AI.</p>
+    <div class="btn-row"><a href="#enquiry" class="btn btn-primary">Request a quotation →</a><button type="button" class="btn btn-ghost" data-chat="">Ask our assistant</button></div>
+    <div class="trust-row"><span>Python · R · SPSS · Stata · SQL</span><span>Remote clients worldwide</span><span>Confidential by default</span></div>
+  </div>
+  <figure class="hero-art" aria-hidden="true"><svg viewBox="0 0 300 200"><defs><linearGradient id="band" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity="0.18"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0.02"/></linearGradient></defs><line x1="16" x2="290" y1="40" y2="40" stroke="var(--line)" stroke-dasharray="2 4"/><line x1="16" x2="290" y1="80" y2="80" stroke="var(--line)" stroke-dasharray="2 4"/><line x1="16" x2="290" y1="120" y2="120" stroke="var(--line)" stroke-dasharray="2 4"/><line x1="16" x2="290" y1="160" y2="160" stroke="var(--line)" stroke-dasharray="2 4"/><line x1="16" x2="290" y1="186" y2="186" stroke="var(--ink-2)"/><line x1="16" x2="16" y1="14" y2="186" stroke="var(--ink-2)"/><path d="M20 160 L280 34 L280 64 L20 190 Z" fill="url(#band)"/><circle cx="28" cy="168" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="44" cy="150" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="52" cy="172" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="66" cy="140" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="78" cy="152" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="90" cy="128" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="104" cy="136" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="112" cy="116" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="126" cy="124" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="138" cy="104" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="150" cy="112" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="162" cy="92" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="176" cy="100" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="186" cy="82" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="200" cy="88" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="212" cy="70" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="226" cy="76" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="238" cy="58" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="252" cy="64" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="266" cy="48" r="3.6" fill="var(--ink)" opacity="0.75"/><circle cx="60" cy="120" r="3" fill="var(--signal)" opacity="0.9"/><circle cx="140" cy="150" r="3" fill="var(--signal)" opacity="0.9"/><circle cx="220" cy="110" r="3" fill="var(--signal)" opacity="0.9"/><circle cx="96" cy="96" r="3" fill="var(--signal)" opacity="0.9"/><line x1="20" y1="176" x2="280" y2="48" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/></svg><figcaption><span>ŷ = β₀ + β₁x</span><span>signal &gt; noise</span></figcaption></figure>
+</div></section>
+
+<section class="section alt" id="services"><div class="wrap">
+  <p class="eyebrow">Services</p><h2>Analytical expertise, end to end.</h2>
+  <p class="lede" style="margin-bottom:24px">Thirteen specialist services. Each lists what it involves, who it suits, what you'll share and an indicative timeline.</p>
+  <article class="service" id="data-science-analytics">
+    <div><span class="cat-label">Data &amp; Statistics</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Data Science &amp; Data Analytics</h2><p class="lede" style="font-size:1.03rem">Turning raw datasets into clear, defensible insight — from cleaning and exploration to modelling and reporting.</p><div><span class="tag">Python</span><span class="tag">R</span><span class="tag">SQL</span><span class="tag">Pandas</span><span class="tag">NumPy</span><span class="tag">Excel</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Data Science &amp; Data Analytics">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Data Science &amp; Data Analytics">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>Data cleaning and preparation</li><li>Exploratory data analysis</li><li>Statistical and predictive modelling</li><li>Interpretation and reporting of findings</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Businesses and startups</li><li>NGOs and development organisations</li><li>Researchers</li><li>Professionals needing data-driven decisions</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>Your dataset (anonymised where possible)</li><li>The questions you want answered</li><li>Any required output format or deadline</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Research data analysis: 3–10 working days (indicative); larger data science work is scoped after assessment.</dd></div></dl>
+  </article><article class="service" id="python-r-programming">
+    <div><span class="cat-label">Data &amp; Statistics</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Python &amp; R Programming</h2><p class="lede" style="font-size:1.03rem">Clean, reproducible code for analysis, automation, statistical computing and research tools.</p><div><span class="tag">Python</span><span class="tag">R</span><span class="tag">Pandas</span><span class="tag">NumPy</span><span class="tag">Scikit-learn</span><span class="tag">Matplotlib</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Python &amp; R Programming">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Python &amp; R Programming">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>Writing and debugging analysis scripts</li><li>Data processing and automation</li><li>Statistical computing</li><li>Reproducible research workflows</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Students and researchers learning or using code</li><li>Analysts automating repetitive work</li><li>Teams needing a working analytical tool</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>What the code should do</li><li>Sample data or existing scripts</li><li>Your environment (Python/R version, packages)</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Python and R programming projects: 3–14 working days (indicative).</dd></div></dl>
+  </article><article class="service" id="spss-stata">
+    <div><span class="cat-label">Data &amp; Statistics</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">SPSS &amp; Stata Statistical Analysis</h2><p class="lede" style="font-size:1.03rem">Rigorous statistical analysis in the software your institution expects, with plain-language interpretation.</p><div><span class="tag">SPSS</span><span class="tag">Stata</span><span class="tag">R</span><span class="tag">Excel</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="SPSS &amp; Stata Statistical Analysis">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about SPSS &amp; Stata Statistical Analysis">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>Descriptive statistics</li><li>Hypothesis testing (t-tests, ANOVA, chi-square, etc.)</li><li>Regression and statistical modelling</li><li>Output tables and interpretation</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Undergraduate, Master's and PhD researchers</li><li>Universities and research institutions</li><li>NGO monitoring &amp; evaluation teams</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>Your data file (.sav, .dta, .xlsx or .csv)</li><li>Research objectives or hypotheses</li><li>Any required tests or reporting style</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Basic statistical analysis: 2–5 working days · research data analysis: 3–10 working days (indicative).</dd></div></dl>
+  </article><article class="service" id="research-consultancy">
+    <div><span class="cat-label">Research</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Research &amp; Academic Consultancy</h2><p class="lede" style="font-size:1.03rem">Methodology guidance, questionnaire design advice and analytical support that strengthens your own research.</p><div><span class="tag">SPSS</span><span class="tag">Stata</span><span class="tag">R</span><span class="tag">Python</span><span class="tag">Excel</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Research &amp; Academic Consultancy">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Research &amp; Academic Consultancy">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>Research methodology consultations</li><li>Questionnaire design guidance</li><li>Data analysis plans</li><li>Feedback on analytical methods and outputs</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Undergraduate and postgraduate researchers</li><li>Academic staff</li><li>Research institutions</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>Your research topic and objectives</li><li>Draft methodology or questionnaire if available</li><li>Institutional guidelines</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Basic statistical analysis: 2–5 working days · research data analysis: 3–10 working days (indicative).</dd></div></dl>
+  </article><article class="service" id="masters-phd-support">
+    <div><span class="cat-label">Research</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Master's &amp; PhD Research Support</h2><p class="lede" style="font-size:1.03rem">Statistical guidance, data analysis and interpretation support for postgraduate research — done ethically.</p><div><span class="tag">SPSS</span><span class="tag">Stata</span><span class="tag">R</span><span class="tag">Python</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Master's &amp; PhD Research Support">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Master's &amp; PhD Research Support">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>Statistical analysis and data cleaning</li><li>Hypothesis testing and modelling</li><li>Interpretation of results</li><li>Professional data visualisation</li><li>Guidance on presenting findings</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Master's students</li><li>PhD candidates</li><li>Supervisors seeking analytical support for their students</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>Your dataset and research objectives/hypotheses</li><li>Your chapter 3 (methodology) if written</li><li>University formatting requirements</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Basic statistical analysis: 2–5 working days · research data analysis: 3–10 working days (indicative).</dd></div></dl>
+  </article><article class="service" id="artificial-intelligence">
+    <div><span class="cat-label">AI &amp; Machine Learning</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Artificial Intelligence</h2><p class="lede" style="font-size:1.03rem">Practical AI applications for analytical problem-solving and intelligent information processing.</p><div><span class="tag">Python</span><span class="tag">PyTorch</span><span class="tag">Scikit-learn</span><span class="tag">Relevant AI frameworks</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Artificial Intelligence">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Artificial Intelligence">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>Scoping where AI genuinely helps</li><li>Intelligent information processing</li><li>Prototype AI applications</li><li>Evaluation and responsible-use review</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Startups and businesses</li><li>Researchers exploring AI methods</li><li>Organisations with large text or data volumes</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>The problem you want to solve</li><li>Available data and its format</li><li>Constraints (budget, privacy, deployment)</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Determined after a technical assessment of your project.</dd></div></dl>
+  </article><article class="service" id="machine-learning">
+    <div><span class="cat-label">AI &amp; Machine Learning</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Machine Learning</h2><p class="lede" style="font-size:1.03rem">Predictive models built properly: data preparation, feature engineering, training, validation and evaluation.</p><div><span class="tag">Python</span><span class="tag">Scikit-learn</span><span class="tag">Pandas</span><span class="tag">NumPy</span><span class="tag">Matplotlib</span><span class="tag">PyTorch</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Machine Learning">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Machine Learning">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>Predictive modelling</li><li>Classification and regression</li><li>Feature engineering</li><li>Model evaluation and validation</li><li>Deployment support</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Businesses forecasting demand, churn or risk</li><li>Researchers using ML methods</li><li>Startups building data products</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>A description of what you want to predict</li><li>Historical data with the outcome you care about</li><li>How the model will be used</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Machine learning projects: 1–4 weeks (indicative).</dd></div></dl>
+  </article><article class="service" id="generative-ai">
+    <div><span class="cat-label">AI &amp; Machine Learning</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Generative AI</h2><p class="lede" style="font-size:1.03rem">Applications built on large language models — assistants, document processing and research tools.</p><div><span class="tag">Python</span><span class="tag">Large Language Models</span><span class="tag">Generative AI frameworks</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Generative AI">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Generative AI">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>LLM-powered assistants and chatbots</li><li>Document summarisation and extraction</li><li>Prompt and workflow design</li><li>Evaluation of output quality</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Businesses automating text-heavy work</li><li>Researchers processing documents</li><li>Startups building AI features</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>The task you want automated</li><li>Example inputs and ideal outputs</li><li>Data-privacy requirements</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Determined after a technical assessment of your project.</dd></div></dl>
+  </article><article class="service" id="financial-engineering">
+    <div><span class="cat-label">Quantitative Finance</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Financial Engineering</h2><p class="lede" style="font-size:1.03rem">Mathematical and computational modelling of financial instruments, risk and markets.</p><div><span class="tag">Python</span><span class="tag">NumPy</span><span class="tag">SciPy</span><span class="tag">Financial mathematics</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Financial Engineering">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Financial Engineering">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>Financial modelling</li><li>Derivatives and option pricing models</li><li>Volatility analysis</li><li>Time-series analysis</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Finance students and researchers</li><li>Fintech startups</li><li>Analysts needing quantitative models</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>The model or question</li><li>Market data or data sources</li><li>Required methodology or reporting</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Determined after a technical assessment of your project.</dd></div></dl>
+  </article><article class="service" id="forex-quant-research">
+    <div><span class="cat-label">Quantitative Finance</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Forex &amp; Quantitative Research</h2><p class="lede" style="font-size:1.03rem">Structured, data-driven research on currency and commodity markets — analysis, not promises.</p><div><span class="tag">Python</span><span class="tag">Streamlit</span><span class="tag">Pandas</span><span class="tag">NumPy</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Forex &amp; Quantitative Research">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Forex &amp; Quantitative Research">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>Market data analysis</li><li>Technical market-structure research</li><li>Strategy research and backtesting frameworks</li><li>Research dashboards</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Traders wanting systematic research</li><li>Quant-curious analysts</li><li>Fintech teams</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>Instruments and timeframes of interest</li><li>Your research hypothesis</li><li>Data sources you use</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Determined after a technical assessment of your project.</dd></div></dl>
+  </article><article class="service" id="business-intelligence">
+    <div><span class="cat-label">Business Intelligence</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Business Intelligence</h2><p class="lede" style="font-size:1.03rem">Reporting workflows that turn raw business data into structured insight for decisions.</p><div><span class="tag">Tableau</span><span class="tag">Excel</span><span class="tag">SQL</span><span class="tag">Python</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Business Intelligence">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Business Intelligence">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>KPI definition and reporting</li><li>Data pipelines from Excel/SQL</li><li>Automated reports</li><li>Decision-support analysis</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>SMEs and startups</li><li>NGOs reporting to donors</li><li>Managers needing regular reporting</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>Your data sources</li><li>The metrics you track</li><li>Who reads the reports and how often</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Interactive dashboards: 3–14 working days (indicative).</dd></div></dl>
+  </article><article class="service" id="data-visualisation">
+    <div><span class="cat-label">Business Intelligence</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Data Visualisation</h2><p class="lede" style="font-size:1.03rem">Charts and visual summaries that communicate findings clearly — for theses, reports and boards.</p><div><span class="tag">Matplotlib</span><span class="tag">Plotly</span><span class="tag">Tableau</span><span class="tag">Excel</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Data Visualisation">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Data Visualisation">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>Publication-quality charts</li><li>Visual summaries of research findings</li><li>Infographic-style reporting</li><li>Chart design review</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Researchers presenting findings</li><li>Organisations reporting results</li><li>Anyone preparing a presentation</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>Data or results to visualise</li><li>Audience and format (report, slides, web)</li><li>Style guidelines if any</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Typically scoped with the related analysis; dashboards 3–14 working days (indicative).</dd></div></dl>
+  </article><article class="service" id="dashboard-development">
+    <div><span class="cat-label">Business Intelligence</span><h2 style="margin-top:8px;font-size:clamp(1.5rem,3vw,2.1rem)">Dashboard Development</h2><p class="lede" style="font-size:1.03rem">Interactive dashboards to explore variables, monitor KPIs and share insight.</p><div><span class="tag">Streamlit</span><span class="tag">Plotly</span><span class="tag">Tableau</span><span class="tag">Python</span><span class="tag">Pandas</span></div>
+      <div class="btn-row" style="margin-top:14px"><button type="button" class="btn btn-primary" data-enquiry="Dashboard Development">Enquire about this</button><button type="button" class="btn btn-ghost" data-chat="Tell me more about Dashboard Development">Ask a question</button></div></div>
+    <dl><div><dt>What it involves</dt><dd><ul><li>Interactive dashboard design and build</li><li>Filters, drill-downs and KPIs</li><li>Data refresh workflows</li><li>Handover and guidance</li></ul></dd></div><div><dt>Who benefits</dt><dd><ul><li>Businesses monitoring performance</li><li>Researchers sharing results</li><li>NGOs tracking programmes</li></ul></dd></div><div><dt>What you'll provide</dt><dd><ul><li>Your data source</li><li>The questions the dashboard should answer</li><li>Preferred platform (Tableau, Streamlit, etc.)</li></ul></dd></div><div><dt>Indicative timeline</dt><dd>Interactive dashboards: 3–14 working days (indicative).</dd></div></dl>
+  </article>
+</div></section>
+
+<section class="section" id="process"><div class="wrap">
+  <p class="eyebrow">How we work</p><h2>A clear process, from enquiry to delivery.</h2>
+  <p class="lede" style="margin-bottom:28px">You receive a quotation covering scope, deliverables, timeline, price, payment terms and revisions before any work begins.</p>
+  <div class="steps"><div class="step"><h3>Initial enquiry</h3><p>Contact us through the website chatbot, contact form, email or WhatsApp, and briefly explain the service you need and the problem you want to solve.</p></div><div class="step"><h3>Assessment &amp; consultation</h3><p>We review your requirements, datasets, expected deliverables and complexity — and arrange a consultation where needed.</p></div><div class="step"><h3>Quotation &amp; agreement</h3><p>You receive a quotation covering scope, deliverables, estimated turnaround, pricing, payment terms and revisions. Work starts once you approve.</p></div><div class="step"><h3>Project execution</h3><p>The work follows the agreed methodology and deliverables, with progress updates where appropriate.</p></div><div class="step"><h3>Delivery &amp; support</h3><p>Deliverables arrive in the agreed format. You review them and can request eligible revisions within the agreed period.</p></div></div>
+  <div class="grid grid-2" style="margin-top:40px;gap:32px;align-items:start">
+    <div><h3>Pricing</h3><p class="muted">There is no single fixed price. Cost depends on complexity, data volume, technical requirements, deliverables, timeline and the level of consultancy needed. Urgent work is possible, subject to availability, and may attract additional charges.</p></div>
+    <div class="card" style="overflow-x:auto"><table class="table"><thead><tr><th>Project type</th><th>Indicative time</th></tr></thead><tbody><tr><td>Basic statistical analysis</td><td style="white-space:nowrap">2–5 working days</td></tr><tr><td>Research data analysis</td><td style="white-space:nowrap">3–10 working days</td></tr><tr><td>Python and R programming projects</td><td style="white-space:nowrap">3–14 working days</td></tr><tr><td>Machine learning projects</td><td style="white-space:nowrap">1–4 weeks</td></tr><tr><td>Interactive dashboards</td><td style="white-space:nowrap">3–14 working days</td></tr><tr><td>Complex AI and data science applications</td><td style="white-space:nowrap">After technical assessment</td></tr></tbody></table><p class="small muted" style="margin:12px 0 0">Estimates, not guaranteed deadlines.</p></div>
+  </div>
+</div></section>
+
+<section class="section alt" id="about"><div class="wrap">
+  <p class="eyebrow">About</p><h2>Wicliff Chomba Nyaga</h2>
+  <div class="grid grid-2" style="gap:40px;align-items:start;margin-top:16px">
+    <div><p>Wicliff Chomba Nyaga is a multidisciplinary Data Science, Artificial Intelligence, Research Analytics and Financial Engineering professional with experience in quantitative research, statistical computing, machine learning and analytical problem-solving.</p><p>He specialises in transforming complex datasets into meaningful insights, developing data-driven solutions, supporting rigorous academic research and building intelligent analytical applications.</p><p>He works with researchers, postgraduate students, businesses, entrepreneurs, startups and institutions across different industries and geographical locations. His technical expertise spans Python, R, SQL, SPSS, Stata, Tableau, machine learning frameworks and quantitative financial research.</p><p>Wicliff is currently pursuing a Master of Science in Financial Engineering at WorldQuant University while working as a Senior Analyst at WorldQuant Brain, where his work involves quantitative research and Alpha development.</p><p>Through Wickie Stat Consultancy, he aims to make advanced analytical, programming and research consultancy services accessible to individuals and organisations locally and internationally.</p><p class="muted">Additional freelance and AI-related work has included projects through platforms such as Upwork, Fiverr, Outlier AI and other online professional networks.</p></div>
+    <div class="grid" style="gap:16px">
+      <div class="card"><h3>Qualifications</h3><div style="margin-top:12px"><b>Master of Science in Financial Engineering (in progress)</b><div class="small muted">WorldQuant University, Washington, United States · Started 2025 · expected completion 2027</div><p class="small" style="margin:4px 0 0">Financial markets, quantitative finance, mathematical modelling, financial engineering and computational methods.</p></div><div style="margin-top:12px"><b>Certificate in Foundations of Financial Engineering</b><div class="small muted">WorldQuant University · Awarded 19 February 2026</div></div></div>
+      <div class="card"><h3>Experience</h3><div style="margin-top:12px"><b>Senior Analyst</b> <span class="small muted">· WorldQuant Brain</span><ul style="margin:4px 0 0;padding-left:18px;color:var(--ink-2);font-size:.93rem"><li>Quantitative research and Alpha development.</li><li>Applies computational and statistical approaches to financial market data.</li><li>Works with quantitative research methodologies and analytical techniques.</li></ul></div><div style="margin-top:12px"><b>Freelance Data Science &amp; Research Analytics Consultant</b> <span class="small muted">· Independent</span><ul style="margin:4px 0 0;padding-left:18px;color:var(--ink-2);font-size:.93rem"><li>Data analysis and programming consultancy.</li><li>Research datasets in Python, R, SPSS, Stata and Excel.</li><li>Statistical analysis, data visualisation and interpretation.</li><li>Analytical solutions for academic, research and business applications.</li></ul></div><div style="margin-top:12px"><b>Independent Programming &amp; AI Projects</b> <span class="small muted">· Self-directed</span><ul style="margin:4px 0 0;padding-left:18px;color:var(--ink-2);font-size:.93rem"><li>Python and R programming; statistical computing.</li><li>Machine learning applications; data processing and automation.</li><li>Research-oriented analytical tools.</li></ul></div></div>
+    </div>
+  </div>
+  <div class="grid grid-3" style="margin-top:32px"><div class="card"><h3>Programming &amp; data science</h3><div style="margin-top:10px"><span class="tag">Python</span><span class="tag">R</span><span class="tag">SQL</span><span class="tag">Pandas</span><span class="tag">NumPy</span><span class="tag">Scikit-learn</span></div></div><div class="card"><h3>Statistical software</h3><div style="margin-top:10px"><span class="tag">SPSS</span><span class="tag">Stata</span><span class="tag">R</span><span class="tag">Excel</span></div></div><div class="card"><h3>Machine learning &amp; AI</h3><div style="margin-top:10px"><span class="tag">Machine Learning</span><span class="tag">Deep Learning</span><span class="tag">Generative AI</span><span class="tag">Large Language Models</span><span class="tag">Predictive analytics</span></div></div><div class="card"><h3>Visualisation &amp; BI</h3><div style="margin-top:10px"><span class="tag">Tableau</span><span class="tag">Matplotlib</span><span class="tag">Interactive dashboards</span><span class="tag">Streamlit</span></div></div><div class="card"><h3>Quantitative finance</h3><div style="margin-top:10px"><span class="tag">Financial modelling</span><span class="tag">Time-series analysis</span><span class="tag">Quantitative research</span><span class="tag">Financial derivatives</span><span class="tag">Algorithmic trading research</span></div></div><div class="card"><h3>Who we work with</h3><ul style="margin:8px 0 0;padding-left:18px;color:var(--ink-2);font-size:.93rem"><li>Undergraduate and postgraduate researchers</li><li>Master's and PhD researchers</li><li>Universities and research institutions</li><li>Businesses and startups</li><li>NGOs and development organisations</li><li>Entrepreneurs</li><li>Professionals requiring data-driven solutions</li><li>International clients requiring remote consultancy</li></ul></div></div>
+  <div id="integrity" style="margin-top:48px"><h3 style="font-family:var(--font-display);font-weight:400;font-size:1.9rem">Academic integrity &amp; ethical boundaries</h3><p class="lede">The objective is to help researchers understand their data, improve their analytical methods and develop independent research capabilities.</p>
+    <div class="grid grid-2" style="margin-top:16px"><div class="card"><h3>We do provide</h3><ul style="padding-left:18px;color:var(--ink-2)"><li>Research methodology consultations</li><li>Statistical analysis guidance</li><li>Data cleaning and preparation</li><li>Questionnaire design guidance</li><li>Statistical interpretation</li><li>Python, R, SPSS and Stata programming support</li><li>Guidance on research findings and presentation</li><li>Technical support for reproducible research</li><li>Feedback on analytical methods and research outputs</li></ul></div><div class="card"><h3>We do not</h3><ul style="padding-left:18px;color:var(--ink-2)"><li>Ghost-write entire Master's or PhD theses for students to submit as their own work.</li><li>Write academic assignments or examinations for submission under another person's name.</li><li>Fabricate research findings, datasets or statistical results.</li><li>Manipulate statistical outputs to produce predetermined conclusions.</li><li>Invent references, citations or research sources.</li><li>Guarantee academic grades, research approval or publication acceptance.</li><li>Participate in academic examination cheating.</li><li>Guarantee financial returns from Forex trading or investments.</li><li>Promise that any trading strategy will always be profitable.</li><li>Fabricate business performance statistics.</li><li>Misrepresent qualifications or professional experience.</li><li>Undertake projects involving illegal access to computer systems or unauthorised data.</li><li>Share confidential client information without permission.</li></ul></div></div></div>
+</div></section>
+
+<section class="section" id="portfolio"><div class="wrap">
+  <p class="eyebrow">Portfolio</p><h2>Selected analytical work.</h2>
+  <p class="lede" style="margin-bottom:28px">Demonstration and independent research projects. Client projects are only published with the client's explicit permission.</p>
+  <div class="grid grid-2"><article class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap"><span class="tag accent">Independent research project</span><span class="mono small muted">Quantitative Finance</span></div><h3 style="margin-top:10px">Forex Market Analytics Dashboard</h3><p>An analytical application designed to examine financial market data, identify technical market structures and organise quantitative trading research across selected currency pairs and commodities.</p><div><span class="tag">Python</span><span class="tag">Streamlit</span><span class="tag">Pandas</span><span class="tag">NumPy</span><span class="tag">Financial market data</span></div></article><article class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap"><span class="tag accent">Demonstration project</span><span class="mono small muted">Machine Learning</span></div><h3 style="margin-top:10px">Machine Learning Predictive Analytics</h3><p>Predictive modelling workflows involving data preparation, feature engineering, model training, validation and performance evaluation.</p><div><span class="tag">Python</span><span class="tag">Scikit-learn</span><span class="tag">Pandas</span><span class="tag">NumPy</span><span class="tag">Matplotlib</span></div></article><article class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap"><span class="tag accent">Independent research project</span><span class="mono small muted">Quantitative Finance</span></div><h3 style="margin-top:10px">Financial Engineering &amp; Derivatives Modelling</h3><p>Quantitative exploration of financial derivatives, option pricing models, volatility and mathematical approaches to financial market analysis.</p><div><span class="tag">Python</span><span class="tag">NumPy</span><span class="tag">SciPy</span><span class="tag">Financial mathematics</span></div></article><article class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap"><span class="tag accent">Demonstration project</span><span class="mono small muted">Research Analytics</span></div><h3 style="margin-top:10px">Research Data Analysis &amp; Statistical Reporting</h3><p>A research analytics workflow covering data cleaning, descriptive statistics, hypothesis testing, statistical modelling, interpretation and reporting of research findings.</p><div><span class="tag">SPSS</span><span class="tag">R</span><span class="tag">Python</span><span class="tag">Excel</span><span class="tag">Stata</span></div></article><article class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap"><span class="tag accent">Demonstration project</span><span class="mono small muted">Visualisation</span></div><h3 style="margin-top:10px">Interactive Research Data Visualisation</h3><p>Interactive dashboards for presenting research findings, exploring variables and communicating analytical insights.</p><div><span class="tag">Python</span><span class="tag">Streamlit</span><span class="tag">Plotly</span><span class="tag">Pandas</span><span class="tag">Tableau</span></div></article><article class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap"><span class="tag accent">Independent research project</span><span class="mono small muted">AI &amp; ML</span></div><h3 style="margin-top:10px">Machine Learning &amp; AI Research Applications</h3><p>Exploration of machine learning and AI approaches for analytical problem-solving, intelligent information processing and predictive applications.</p><div><span class="tag">Python</span><span class="tag">Scikit-learn</span><span class="tag">PyTorch</span><span class="tag">AI frameworks</span></div></article><article class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap"><span class="tag accent">Independent research project</span><span class="mono small muted">Data Science</span></div><h3 style="margin-top:10px">Social Network Data Analytics</h3><p>Exploratory analysis of social network datasets to investigate relationships, patterns, network structures and statistical characteristics.</p><div><span class="tag">Python</span><span class="tag">PySpark</span><span class="tag">Pandas</span><span class="tag">Matplotlib</span></div></article><article class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap"><span class="tag accent">Demonstration project</span><span class="mono small muted">Business Intelligence</span></div><h3 style="margin-top:10px">Business Intelligence &amp; Data Visualisation</h3><p>Analytical reporting workflows that transform raw datasets into structured insights and visual summaries for decision-making.</p><div><span class="tag">Tableau</span><span class="tag">Excel</span><span class="tag">SQL</span><span class="tag">Python</span></div></article></div>
+</div></section>
+
+<section class="section alt" id="contact"><div class="wrap">
+  <p class="eyebrow">Contact</p><h2>Let's talk about your project.</h2>
+  <p class="lede">Reach Wicliff on WhatsApp or by email, or send an enquiry for a tailored quotation. Consultations by WhatsApp, email or online meeting.</p>
+  <div class="grid grid-2" style="gap:40px;align-items:start;margin-top:24px">
+    <div><p class="muted">Consultant: Wicliff Chomba Nyaga</p><div class="contact-list">
+  <div class="contact-item"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span><span class="ci-body"><b>Email</b><span class="sel">wickiestat97@gmail.com</span></span><button type="button" class="copy-btn" data-copy="wickiestat97@gmail.com">Copy</button></div>
+  <a class="contact-item" href="https://wa.me/254704619869?text=Hello%20Wicliff%2C%20I%20found%20Wickie%20Stat%20Consultancy%20online%20and%20would%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener noreferrer"><span class="ico wa"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91A9.85 9.85 0 0 0 12.04 2Zm0 18.15a8.23 8.23 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.23 8.23 0 0 1 0 16.47Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.17.24-.64.8-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42h-.48a.92.92 0 0 0-.67.31c-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.02 2.57.12.17 1.76 2.68 4.25 3.76.59.26 1.06.41 1.42.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.22-.17-.47-.29Z"/></svg></span><span class="ci-body"><b>Kenya WhatsApp</b><span>+254 704 619 869</span></span></a>
+  <div class="contact-item pending"><span class="ico wa"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91A9.85 9.85 0 0 0 12.04 2Zm0 18.15a8.23 8.23 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.23 8.23 0 0 1 0 16.47Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.17.24-.64.8-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42h-.48a.92.92 0 0 0-.67.31c-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.02 2.57.12.17 1.76 2.68 4.25 3.76.59.26 1.06.41 1.42.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.22-.17-.47-.29Z"/></svg></span><span class="ci-body"><b>International WhatsApp</b><span>Coming soon. Please use the Kenya number or email for now.</span></span></div>
+</div></div>
+    <div class="card" id="enquiry"><h2 style="font-size:1.8rem">Project enquiry</h2><p class="muted small">You'll receive a quotation covering scope, deliverables, timeline and price before any work begins.</p>
+      <form class="form" id="enquiry-form" novalidate>
+        <div class="grid grid-2">
+          <div class="field"><label for="f-name">Full name</label><input id="f-name" autocomplete="name" maxlength="100" value="Amina Otieno"></div>
+          <div class="field"><label for="f-email">Email address</label><input id="f-email" type="email" autocomplete="email" maxlength="200" value="amina.otieno@example.com"></div>
+          <div class="field"><label for="f-whatsapp">WhatsApp number</label><input id="f-whatsapp" type="tel" maxlength="20" placeholder="+254 7XX XXX XXX" value="+254 711 000 000"></div>
+          <div class="field"><label for="f-service">Service required</label><select id="f-service"><option value="">Choose a service…</option><option>Data Science &amp; Data Analytics</option><option>Python &amp; R Programming</option><option selected>SPSS &amp; Stata Statistical Analysis</option><option>Research &amp; Academic Consultancy</option><option>Master's &amp; PhD Research Support</option><option>Artificial Intelligence</option><option>Machine Learning</option><option>Generative AI</option><option>Financial Engineering</option><option>Forex &amp; Quantitative Research</option><option>Business Intelligence</option><option>Data Visualisation</option><option>Dashboard Development</option><option>Not sure yet</option></select></div>
+        </div>
+        <div class="field"><label for="f-description">Brief project description</label><textarea id="f-description" maxlength="2000">Example: I have questionnaire data from 180 respondents for my MSc and need regression analysis in SPSS with interpretation of the results.</textarea></div>
+        <div class="grid grid-2">
+          <div class="field"><label for="f-timeline">Expected timeline</label><input id="f-timeline" list="tl" maxlength="100" value="2–4 weeks"><datalist id="tl"><option value="Within a week"><option value="1–2 weeks"><option value="2–4 weeks"><option value="1–3 months"><option value="Flexible"></datalist></div>
+          <div class="field"><label for="f-budget">Budget range (optional)</label><input id="f-budget" maxlength="100" placeholder="e.g. KES 15,000–25,000"></div>
+        </div>
+        <label class="check"><input type="checkbox" id="f-consent"><span>I agree that Wickie Stat Consultancy may store and use these details to respond to my enquiry, as described in the <a href="#privacy">Privacy notice</a>.</span></label>
+        <div id="form-msg" role="status"></div>
+        <div class="btn-row"><button class="btn btn-primary" type="submit">Submit enquiry</button></div>
+        <p class="small muted" style="margin:0">The example values above are placeholders to show the form filled in.</p>
+      </form>
+    </div>
+  </div>
+  <div style="margin-top:56px"><h3 style="font-family:var(--font-display);font-weight:400;font-size:1.9rem">Common questions</h3>
+    <div class="grid grid-2 faq-grid" style="margin-top:16px"><details class="card"><summary>What is Wickie Stat Consultancy?</summary><p>A professional consultancy providing data science, research analytics, statistical analysis, programming, artificial intelligence, machine learning and financial engineering services to individuals, researchers, businesses, startups and organisations.</p></details><details class="card"><summary>Who can use your services?</summary><p>Undergraduate and postgraduate researchers, Master's and PhD researchers, universities and research institutions, businesses and startups, NGOs and development organisations, entrepreneurs, professionals needing data-driven solutions, and international clients who need remote consultancy.</p></details><details class="card"><summary>Do you work with international clients?</summary><p>Yes. We offer remote consultancy to clients in Kenya, the United Kingdom, the United States, Sweden and other international markets.</p></details><details class="card"><summary>Do you provide online consultations?</summary><p>Yes. Consultations can be arranged through WhatsApp, email or online meetings, depending on your preference and the project's requirements.</p></details><details class="card"><summary>How long does a project take?</summary><p>It depends on complexity, scope and data availability. Indicative timelines: basic statistical analysis 2–5 working days; research data analysis 3–10 working days; Python/R programming 3–14 working days; machine learning 1–4 weeks; interactive dashboards 3–14 working days; complex AI applications after a technical assessment. These are estimates, not guaranteed deadlines — a confirmed timeline follows a review of your project.</p></details><details class="card"><summary>Can you handle urgent projects?</summary><p>Yes, subject to availability and complexity. Urgent requests are assessed individually and may attract additional charges.</p></details><details class="card"><summary>How much do your services cost?</summary><p>There's no single fixed price. Pricing depends on project complexity, the amount of data, technical requirements, deliverables, timeline and the level of consultancy needed. You always receive a quotation before any work begins.</p></details><details class="card"><summary>Do you require a deposit?</summary><p>For larger projects, an agreed initial deposit may be required before work starts. Payment milestones are set according to the project scope.</p></details><details class="card"><summary>Which payment methods do you accept?</summary><p>M-Pesa for eligible Kenyan clients, bank transfers, international bank transfers, and other mutually agreed electronic payment methods. Exact payment instructions are shared directly when the project is confirmed.</p></details><details class="card"><summary>Do you offer revisions?</summary><p>Yes. Reasonable revisions are available where deliverables don't meet the originally agreed specifications — typically up to two revision rounds for eligible projects. Requests that substantially change the original scope may need a separate quotation.</p></details><details class="card"><summary>How do you ensure quality?</summary><p>Projects follow an agreed workflow: requirements assessment, data validation, appropriate analytical methods, quality checks and review of final deliverables. Where applicable, you also receive explanations of the methodology, procedures and interpretation of findings.</p></details><details class="card"><summary>Is my research data confidential?</summary><p>Yes. Client information, datasets, research materials and project discussions are treated as confidential and are never publicly disclosed without permission.</p></details><details class="card"><summary>Can I share sensitive research datasets?</summary><p>Please only share information you're authorised to disclose, and remove or anonymise personal identifiers wherever possible. Project files are handled with care and not used for unrelated purposes.</p></details><details class="card"><summary>Do you publish client projects in your portfolio?</summary><p>Only with the client's explicit permission. Client confidentiality takes priority over portfolio promotion.</p></details></div></div>
+</div></section>
+
+<section class="section" id="privacy"><div class="wrap privacy">
+  <p class="eyebrow">Privacy notice</p><h2>How we handle your information</h2>
+  <p>Wickie Stat Consultancy is operated by Wicliff Chomba Nyaga. For any privacy question or request, email <span class="sel">wickiestat97@gmail.com</span>.</p>
+  <h3>What we collect</h3><p>When you submit an enquiry through the chatbot or the contact form, we collect your full name, email address, WhatsApp number, the service you need, your project description, expected timeline and, if you choose, a budget range. We only collect this after you tick the consent box.</p>
+  <h3>The website assistant</h3><p>Messages you type to the assistant are processed to generate a reply (by our AI provider, OpenAI, when AI mode is on). Chats are not stored by default; a copy is kept with your enquiry only if you tick the optional box. Personal details typed during the enquiry steps are never sent to the AI provider. Please don't share passwords, financial details or sensitive personal data in the chat.</p>
+  <h3>Why we use it</h3><p>Only to respond to your enquiry, prepare a quotation and communicate about your project. We don't sell your data or use it for unrelated marketing.</p>
+  <h3>Retention</h3><p>Enquiries are emailed to Wicliff and may be stored in a secure database with access restricted to the business. Enquiries that don't become projects are deleted within 12 months.</p>
+  <h3>Your rights</h3><p>You can ask to access, correct or delete your information, or withdraw consent, by emailing wickiestat97@gmail.com. We aim to follow applicable data-protection laws, including Kenya's Data Protection Act 2019 and, for UK and EU clients, the UK GDPR and GDPR.</p>
+</div></section>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <div class="footer-grid">
+    <div><h4>Wickie Stat Consultancy</h4><p style="max-width:42ch">Turning Data Into Intelligence. Transforming Research Into Impact.</p><p class="small">Consultant: Wicliff Chomba Nyaga</p></div>
+    <div><h4>Contact</h4><ul><li><span class="sel">wickiestat97@gmail.com</span></li><li><a href="https://wa.me/254704619869?text=Hello%20Wicliff%2C%20I%20found%20Wickie%20Stat%20Consultancy%20online%20and%20would%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener noreferrer">Kenya WhatsApp: +254 704 619 869</a></li><li><a href="#enquiry">Project enquiry form</a></li></ul></div>
+    <div><h4>Popular services</h4><ul><li><a href="#data-science-analytics">Data Science &amp; Data Analytics</a></li><li><a href="#spss-stata">SPSS &amp; Stata Statistical Analysis</a></li><li><a href="#masters-phd-support">Master's &amp; PhD Research Support</a></li><li><a href="#machine-learning">Machine Learning</a></li><li><a href="#dashboard-development">Dashboard Development</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Wickie Stat Consultancy. Advanced Analytics. Intelligent Solutions. Measurable Impact.</span><span><a href="#privacy">Privacy notice</a> · <a href="#integrity">Academic integrity</a></span></div>
+</div></footer>
+
+<div class="fab-stack">
+  <a class="wa-fab" href="https://wa.me/254704619869?text=Hello%20Wicliff%2C%20I%20found%20Wickie%20Stat%20Consultancy%20online%20and%20would%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener noreferrer" aria-label="Chat with Wicliff on WhatsApp (+254 704 619 869)"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91A9.85 9.85 0 0 0 12.04 2Zm0 18.15a8.23 8.23 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.23 8.23 0 0 1 0 16.47Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.17.24-.64.8-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42h-.48a.92.92 0 0 0-.67.31c-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.02 2.57.12.17 1.76 2.68 4.25 3.76.59.26 1.06.41 1.42.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.22-.17-.47-.29Z"/></svg></a>
+  <button class="chat-fab" id="chat-fab" type="button" aria-label="Open chat with our virtual assistant"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.4 7.55L3 21l1.45-5.6A8.5 8.5 0 1 1 21 12Z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01" stroke-width="2.6"/></svg><span class="pulse" aria-hidden="true"></span><span class="chat-fab-label">Questions? Ask our assistant</span></button>
+</div>
+<section class="chat-panel" id="chat-panel" role="dialog" aria-label="Wickie Stat virtual assistant" hidden>
+  <header class="chat-head">
+    <div class="chat-avatar" aria-hidden="true">WS</div>
+    <div class="chat-title"><b>Wickie Stat Assistant</b><span><span class="demo-chip" title="Demonstration mode: answers come from a fixed knowledge base, not live AI.">Demo mode</span> Instant answers</span></div>
+    <button type="button" id="chat-min" aria-label="Minimise chat" title="Minimise"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"/></svg></button>
+    <button type="button" id="chat-max" aria-label="Maximise chat" title="Maximise"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></button>
+    <button type="button" id="chat-close" aria-label="Close chat" title="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </header>
+  <div class="chat-log" id="chat-log" aria-live="polite"><p class="demo-note"><b>Demonstration mode.</b> I answer from Wickie Stat's knowledge base rather than live AI, so I may suggest contacting Wicliff for anything specific.</p></div>
+  <div class="quick" id="chat-quick" role="group" aria-label="Suggested replies"></div>
+  <form class="chat-input" id="chat-form"><textarea id="chat-text" rows="1" maxlength="2000" placeholder="Type your message…" aria-label="Message"></textarea><button type="submit" aria-label="Send message"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
+  <p class="chat-foot">Please don't share passwords or sensitive personal data here. <a href="#privacy">Privacy</a></p>
+</section>
+<template id="icon-restore"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg></template>
+<script>"use strict";(()=>{var re=Object.defineProperty;var F=(t,a)=>{for(var e in a)re(t,e,{get:a[e],enumerable:!0})};var x={};F(x,{ACTIVE_WHATSAPP_LINES:()=>M,BUSINESS:()=>l,DEFAULT_WHATSAPP_MESSAGE:()=>$,EMAIL_BODY_TEMPLATE:()=>U,EMAIL_SUBJECT:()=>L,INTERNATIONAL_PENDING:()=>S,PAGES:()=>ce,WHATSAPP_LINES:()=>j,mailtoLink:()=>le,whatsappLink:()=>oe});var l={name:"Wickie Stat Consultancy",owner:"Wicliff Chomba Nyaga",ownerFirstName:"Wicliff",email:"wickiestat97@gmail.com",tagline:"Turning Data Into Intelligence. Transforming Research Into Impact.",positioning:"Advanced Analytics. Intelligent Solutions. Measurable Impact."},se={display:"[INSERT SECOND INTERNATIONAL NUMBER]",digits:""},j=[{id:"kenya",label:"Kenya WhatsApp",display:"+254 704 619 869",digits:"254704619869"},{id:"international",label:"International WhatsApp",...se}],M=j.filter(t=>/^\d{8,15}$/.test(t.digits)),S=!M.some(t=>t.id==="international"),$="Hello Wicliff, I found Wickie Stat Consultancy online and would like to discuss a project.";function oe(t,a=$){return`https://wa.me/${t.digits}?text=${encodeURIComponent(a)}`}var L="Project Enquiry \u2013 Wickie Stat Consultancy",U=["Hello Wicliff,","","I would like to enquire about your services.","","Full name: ","WhatsApp number: ","Service required: ","Project description: ","Expected timeline: ","Budget range (optional): ","","Kind regards,"].join(`
+`);function le(t=L,a=U){return`mailto:${l.email}?subject=${encodeURIComponent(t)}&body=${encodeURIComponent(a)}`}var ce={home:{href:"/",label:"Home"},services:{href:"/services",label:"Services"},portfolio:{href:"/portfolio",label:"Portfolio"},about:{href:"/about",label:"About Wicliff"},contact:{href:"/contact",label:"Contact"},privacy:{href:"/privacy",label:"Privacy notice"}};var O=["Explore Your Services","I Need Data Analysis","I Need Python/R Programming","I Need AI/ML Solutions","I Need Research Support","Request a Quotation","Speak to Wicliff"],B=`Hello! Welcome to Wickie Stat Consultancy.
+
+I'm your virtual assistant. I can help you explore our services, understand how we work, and submit a project enquiry.
+
+How can I assist you today?`;var Q={short:"Wicliff Chomba Nyaga is a multidisciplinary Data Science, Artificial Intelligence, Research Analytics and Financial Engineering professional with experience in quantitative research, statistical computing, machine learning and analytical problem-solving.",paragraphs:["Wicliff Chomba Nyaga is a multidisciplinary Data Science, Artificial Intelligence, Research Analytics and Financial Engineering professional with experience in quantitative research, statistical computing, machine learning and analytical problem-solving.","He specialises in transforming complex datasets into meaningful insights, developing data-driven solutions, supporting rigorous academic research and building intelligent analytical applications.","He works with researchers, postgraduate students, businesses, entrepreneurs, startups and institutions across different industries and geographical locations. His technical expertise spans Python, R, SQL, SPSS, Stata, Tableau, machine learning frameworks and quantitative financial research.","Wicliff is currently pursuing a Master of Science in Financial Engineering at WorldQuant University while working as a Senior Analyst at WorldQuant Brain, where his work involves quantitative research and Alpha development.","Through Wickie Stat Consultancy, he aims to make advanced analytical, programming and research consultancy services accessible to individuals and organisations locally and internationally."]},H=[{title:"Master of Science in Financial Engineering (in progress)",institution:"WorldQuant University, Washington, United States",dates:"Started 2025 \xB7 expected completion 2027",detail:"Financial markets, quantitative finance, mathematical modelling, financial engineering and computational methods."},{title:"Certificate in Foundations of Financial Engineering",institution:"WorldQuant University",dates:"Awarded 19 February 2026",detail:""}],I=[{role:"Senior Analyst",org:"WorldQuant Brain",points:["Quantitative research and Alpha development.","Applies computational and statistical approaches to financial market data.","Works with quantitative research methodologies and analytical techniques."]},{role:"Freelance Data Science & Research Analytics Consultant",org:"Independent",points:["Data analysis and programming consultancy.","Research datasets in Python, R, SPSS, Stata and Excel.","Statistical analysis, data visualisation and interpretation.","Analytical solutions for academic, research and business applications."]},{role:"Independent Programming & AI Projects",org:"Self-directed",points:["Python and R programming; statistical computing.","Machine learning applications; data processing and automation.","Research-oriented analytical tools."]}];var Y=[{area:"Programming & data science",items:["Python","R","SQL","Pandas","NumPy","Scikit-learn"]},{area:"Statistical software",items:["SPSS","Stata","R","Excel"]},{area:"Machine learning & AI",items:["Machine Learning","Deep Learning","Generative AI","Large Language Models","Predictive analytics"]},{area:"Visualisation & BI",items:["Tableau","Matplotlib","Interactive dashboards","Streamlit"]},{area:"Quantitative finance",items:["Financial modelling","Time-series analysis","Quantitative research","Financial derivatives","Algorithmic trading research"]}],P="Basic statistical analysis: 2\u20135 working days \xB7 research data analysis: 3\u201310 working days (indicative).",v="Determined after a technical assessment of your project.",p=[{slug:"data-science-analytics",name:"Data Science & Data Analytics",category:"Data & Statistics",summary:"Turning raw datasets into clear, defensible insight \u2014 from cleaning and exploration to modelling and reporting.",involves:["Data cleaning and preparation","Exploratory data analysis","Statistical and predictive modelling","Interpretation and reporting of findings"],whoBenefits:["Businesses and startups","NGOs and development organisations","Researchers","Professionals needing data-driven decisions"],clientProvides:["Your dataset (anonymised where possible)","The questions you want answered","Any required output format or deadline"],tools:["Python","R","SQL","Pandas","NumPy","Excel"],timeline:"Research data analysis: 3\u201310 working days (indicative); larger data science work is scoped after assessment.",keywords:["data science","data analytics","data analysis","analyse","analyze","analysis","dataset","insight","eda","clean my data","data cleaning"],followUp:"What kind of data do you have, and what decision or question should the analysis inform?"},{slug:"python-r-programming",name:"Python & R Programming",category:"Data & Statistics",summary:"Clean, reproducible code for analysis, automation, statistical computing and research tools.",involves:["Writing and debugging analysis scripts","Data processing and automation","Statistical computing","Reproducible research workflows"],whoBenefits:["Students and researchers learning or using code","Analysts automating repetitive work","Teams needing a working analytical tool"],clientProvides:["What the code should do","Sample data or existing scripts","Your environment (Python/R version, packages)"],tools:["Python","R","Pandas","NumPy","Scikit-learn","Matplotlib"],timeline:"Python and R programming projects: 3\u201314 working days (indicative).",keywords:["python","r programming","in r","rstudio","script","code","coding","programming","automation","automate","pandas","debug"],followUp:"Is this new code, or help with an existing Python/R script? A sentence on what it should do is perfect."},{slug:"spss-stata",name:"SPSS & Stata Statistical Analysis",category:"Data & Statistics",summary:"Rigorous statistical analysis in the software your institution expects, with plain-language interpretation.",involves:["Descriptive statistics","Hypothesis testing (t-tests, ANOVA, chi-square, etc.)","Regression and statistical modelling","Output tables and interpretation"],whoBenefits:["Undergraduate, Master's and PhD researchers","Universities and research institutions","NGO monitoring & evaluation teams"],clientProvides:["Your data file (.sav, .dta, .xlsx or .csv)","Research objectives or hypotheses","Any required tests or reporting style"],tools:["SPSS","Stata","R","Excel"],timeline:P,keywords:["spss","stata","regression","anova","t-test","t test","chi-square","chi square","hypothesis","statistical analysis","statistics","stats","correlation","questionnaire data"],followUp:"Which software do you need the analysis in \u2014 SPSS, Stata, R or Python?"},{slug:"research-consultancy",name:"Research & Academic Consultancy",category:"Research",summary:"Methodology guidance, questionnaire design advice and analytical support that strengthens your own research.",involves:["Research methodology consultations","Questionnaire design guidance","Data analysis plans","Feedback on analytical methods and outputs"],whoBenefits:["Undergraduate and postgraduate researchers","Academic staff","Research institutions"],clientProvides:["Your research topic and objectives","Draft methodology or questionnaire if available","Institutional guidelines"],tools:["SPSS","Stata","R","Python","Excel"],timeline:P,keywords:["research","methodology","questionnaire","survey design","academic","proposal","research design","sampling"],followUp:"What stage is your research at \u2014 design, data collection, or analysis and interpretation?"},{slug:"masters-phd-support",name:"Master's & PhD Research Support",category:"Research",summary:"Statistical guidance, data analysis and interpretation support for postgraduate research \u2014 done ethically.",involves:["Statistical analysis and data cleaning","Hypothesis testing and modelling","Interpretation of results","Professional data visualisation","Guidance on presenting findings"],whoBenefits:["Master's students","PhD candidates","Supervisors seeking analytical support for their students"],clientProvides:["Your dataset and research objectives/hypotheses","Your chapter 3 (methodology) if written","University formatting requirements"],tools:["SPSS","Stata","R","Python"],timeline:P,keywords:["master","masters","master's","msc","phd","doctoral","thesis","dissertation","postgraduate","supervisor","chapter 4"],followUp:"Are you currently using SPSS, Stata, R or Python for your analysis?"},{slug:"artificial-intelligence",name:"Artificial Intelligence",category:"AI & Machine Learning",summary:"Practical AI applications for analytical problem-solving and intelligent information processing.",involves:["Scoping where AI genuinely helps","Intelligent information processing","Prototype AI applications","Evaluation and responsible-use review"],whoBenefits:["Startups and businesses","Researchers exploring AI methods","Organisations with large text or data volumes"],clientProvides:["The problem you want to solve","Available data and its format","Constraints (budget, privacy, deployment)"],tools:["Python","PyTorch","Scikit-learn","Relevant AI frameworks"],timeline:v,keywords:["artificial intelligence"," ai ","ai solution","ai model","intelligent","deep learning","neural network","pytorch"],followUp:"What problem are you hoping AI will solve for you?"},{slug:"machine-learning",name:"Machine Learning",category:"AI & Machine Learning",summary:"Predictive models built properly: data preparation, feature engineering, training, validation and evaluation.",involves:["Predictive modelling","Classification and regression","Feature engineering","Model evaluation and validation","Deployment support"],whoBenefits:["Businesses forecasting demand, churn or risk","Researchers using ML methods","Startups building data products"],clientProvides:["A description of what you want to predict","Historical data with the outcome you care about","How the model will be used"],tools:["Python","Scikit-learn","Pandas","NumPy","Matplotlib","PyTorch"],timeline:"Machine learning projects: 1\u20134 weeks (indicative).",keywords:["machine learning","ml","predictive","prediction","predict","classification","classifier","forecast","model","scikit","random forest","xgboost","clustering"],followUp:"Could you briefly describe the problem you want to solve and the data you have?"},{slug:"generative-ai",name:"Generative AI",category:"AI & Machine Learning",summary:"Applications built on large language models \u2014 assistants, document processing and research tools.",involves:["LLM-powered assistants and chatbots","Document summarisation and extraction","Prompt and workflow design","Evaluation of output quality"],whoBenefits:["Businesses automating text-heavy work","Researchers processing documents","Startups building AI features"],clientProvides:["The task you want automated","Example inputs and ideal outputs","Data-privacy requirements"],tools:["Python","Large Language Models","Generative AI frameworks"],timeline:v,keywords:["generative ai","genai","gen ai","llm","large language model","chatgpt","gpt","chatbot","rag","prompt"],followUp:"What would you like a generative AI tool to do \u2014 and what kind of documents or data would it work with?"},{slug:"financial-engineering",name:"Financial Engineering",category:"Quantitative Finance",summary:"Mathematical and computational modelling of financial instruments, risk and markets.",involves:["Financial modelling","Derivatives and option pricing models","Volatility analysis","Time-series analysis"],whoBenefits:["Finance students and researchers","Fintech startups","Analysts needing quantitative models"],clientProvides:["The model or question","Market data or data sources","Required methodology or reporting"],tools:["Python","NumPy","SciPy","Financial mathematics"],timeline:v,keywords:["financial engineering","derivative","derivatives","option pricing","black-scholes","black scholes","volatility","risk model","financial model","monte carlo","quant finance"],followUp:"Which instruments or financial question are you working on?"},{slug:"forex-quant-research",name:"Forex & Quantitative Research",category:"Quantitative Finance",summary:"Structured, data-driven research on currency and commodity markets \u2014 analysis, not promises.",involves:["Market data analysis","Technical market-structure research","Strategy research and backtesting frameworks","Research dashboards"],whoBenefits:["Traders wanting systematic research","Quant-curious analysts","Fintech teams"],clientProvides:["Instruments and timeframes of interest","Your research hypothesis","Data sources you use"],tools:["Python","Streamlit","Pandas","NumPy"],timeline:v,keywords:["forex","fx","currency","trading","trade","xau","gold","eurusd","backtest","backtesting","algorithmic","algo","quant","quantitative","alpha","strategy"],followUp:"Which markets or timeframes are you researching? (Note: we provide research and analysis \u2014 never guaranteed trading returns.)"},{slug:"business-intelligence",name:"Business Intelligence",category:"Business Intelligence",summary:"Reporting workflows that turn raw business data into structured insight for decisions.",involves:["KPI definition and reporting","Data pipelines from Excel/SQL","Automated reports","Decision-support analysis"],whoBenefits:["SMEs and startups","NGOs reporting to donors","Managers needing regular reporting"],clientProvides:["Your data sources","The metrics you track","Who reads the reports and how often"],tools:["Tableau","Excel","SQL","Python"],timeline:"Interactive dashboards: 3\u201314 working days (indicative).",keywords:["business intelligence","bi","kpi","reporting","report","sales data","power bi","sql"],followUp:"What business data do you have, and which metrics matter most to you?"},{slug:"data-visualisation",name:"Data Visualisation",category:"Business Intelligence",summary:"Charts and visual summaries that communicate findings clearly \u2014 for theses, reports and boards.",involves:["Publication-quality charts","Visual summaries of research findings","Infographic-style reporting","Chart design review"],whoBenefits:["Researchers presenting findings","Organisations reporting results","Anyone preparing a presentation"],clientProvides:["Data or results to visualise","Audience and format (report, slides, web)","Style guidelines if any"],tools:["Matplotlib","Plotly","Tableau","Excel"],timeline:"Typically scoped with the related analysis; dashboards 3\u201314 working days (indicative).",keywords:["visualisation","visualization","visualise","visualize","chart","charts","graph","graphs","plot","infographic"],followUp:"What would you like to visualise, and where will it be presented?"},{slug:"dashboard-development",name:"Dashboard Development",category:"Business Intelligence",summary:"Interactive dashboards to explore variables, monitor KPIs and share insight.",involves:["Interactive dashboard design and build","Filters, drill-downs and KPIs","Data refresh workflows","Handover and guidance"],whoBenefits:["Businesses monitoring performance","Researchers sharing results","NGOs tracking programmes"],clientProvides:["Your data source","The questions the dashboard should answer","Preferred platform (Tableau, Streamlit, etc.)"],tools:["Streamlit","Plotly","Tableau","Python","Pandas"],timeline:"Interactive dashboards: 3\u201314 working days (indicative).",keywords:["dashboard","dashboards","streamlit","tableau","interactive","monitoring"],followUp:"Which platform would you prefer \u2014 Tableau, Streamlit or something else \u2014 and who will use the dashboard?"}],_=[{title:"Forex Market Analytics Dashboard",label:"Independent research project",area:"Quantitative Finance",description:"An analytical application designed to examine financial market data, identify technical market structures and organise quantitative trading research across selected currency pairs and commodities.",tools:["Python","Streamlit","Pandas","NumPy","Financial market data"]},{title:"Machine Learning Predictive Analytics",label:"Demonstration project",area:"Machine Learning",description:"Predictive modelling workflows involving data preparation, feature engineering, model training, validation and performance evaluation.",tools:["Python","Scikit-learn","Pandas","NumPy","Matplotlib"]},{title:"Financial Engineering & Derivatives Modelling",label:"Independent research project",area:"Quantitative Finance",description:"Quantitative exploration of financial derivatives, option pricing models, volatility and mathematical approaches to financial market analysis.",tools:["Python","NumPy","SciPy","Financial mathematics"]},{title:"Research Data Analysis & Statistical Reporting",label:"Demonstration project",area:"Research Analytics",description:"A research analytics workflow covering data cleaning, descriptive statistics, hypothesis testing, statistical modelling, interpretation and reporting of research findings.",tools:["SPSS","R","Python","Excel","Stata"]},{title:"Interactive Research Data Visualisation",label:"Demonstration project",area:"Visualisation",description:"Interactive dashboards for presenting research findings, exploring variables and communicating analytical insights.",tools:["Python","Streamlit","Plotly","Pandas","Tableau"]},{title:"Machine Learning & AI Research Applications",label:"Independent research project",area:"AI & ML",description:"Exploration of machine learning and AI approaches for analytical problem-solving, intelligent information processing and predictive applications.",tools:["Python","Scikit-learn","PyTorch","AI frameworks"]},{title:"Social Network Data Analytics",label:"Independent research project",area:"Data Science",description:"Exploratory analysis of social network datasets to investigate relationships, patterns, network structures and statistical characteristics.",tools:["Python","PySpark","Pandas","Matplotlib"]},{title:"Business Intelligence & Data Visualisation",label:"Demonstration project",area:"Business Intelligence",description:"Analytical reporting workflows that transform raw datasets into structured insights and visual summaries for decision-making.",tools:["Tableau","Excel","SQL","Python"]}];var G=[{stage:"Initial enquiry",text:"Contact us through the website chatbot, contact form, email or WhatsApp, and briefly explain the service you need and the problem you want to solve."},{stage:"Assessment & consultation",text:"We review your requirements, datasets, expected deliverables and complexity \u2014 and arrange a consultation where needed."},{stage:"Quotation & agreement",text:"You receive a quotation covering scope, deliverables, estimated turnaround, pricing, payment terms and revisions. Work starts once you approve."},{stage:"Project execution",text:"The work follows the agreed methodology and deliverables, with progress updates where appropriate."},{stage:"Delivery & support",text:"Deliverables arrive in the agreed format. You review them and can request eligible revisions within the agreed period."}];var K=[{id:"what",q:"What is Wickie Stat Consultancy?",a:"A professional consultancy providing data science, research analytics, statistical analysis, programming, artificial intelligence, machine learning and financial engineering services to individuals, researchers, businesses, startups and organisations.",keywords:["what is wickie","who are you","what do you do","about the company","what is this"]},{id:"who",q:"Who can use your services?",a:"Undergraduate and postgraduate researchers, Master's and PhD researchers, universities and research institutions, businesses and startups, NGOs and development organisations, entrepreneurs, professionals needing data-driven solutions, and international clients who need remote consultancy.",keywords:["who can use","who do you work with","who is it for","suitable for"]},{id:"international",q:"Do you work with international clients?",a:"Yes. We offer remote consultancy to clients in Kenya, the United Kingdom, the United States, Sweden and other international markets.",keywords:["international","abroad","outside kenya","uk","united kingdom","usa","united states","sweden","remote","country"]},{id:"online",q:"Do you provide online consultations?",a:"Yes. Consultations can be arranged through WhatsApp, email or online meetings, depending on your preference and the project's requirements.",keywords:["online consultation","meeting","zoom","google meet","call","consultation","meet"]},{id:"timeline",q:"How long does a project take?",a:"It depends on complexity, scope and data availability. Indicative timelines: basic statistical analysis 2\u20135 working days; research data analysis 3\u201310 working days; Python/R programming 3\u201314 working days; machine learning 1\u20134 weeks; interactive dashboards 3\u201314 working days; complex AI applications after a technical assessment. These are estimates, not guaranteed deadlines \u2014 a confirmed timeline follows a review of your project.",keywords:["how long","turnaround","timeline","time frame","timeframe","duration","days","weeks","deadline","when can"]},{id:"urgent",q:"Can you handle urgent projects?",a:"Yes, subject to availability and complexity. Urgent requests are assessed individually and may attract additional charges.",keywords:["urgent","asap","rush","tomorrow","quickly","fast","emergency","tonight"]},{id:"price",q:"How much do your services cost?",a:"There's no single fixed price. Pricing depends on project complexity, the amount of data, technical requirements, deliverables, timeline and the level of consultancy needed. You always receive a quotation before any work begins.",keywords:["how much","price","pricing","cost","charge","rate","rates","fee","fees","quote","quotation","budget","cheap","expensive","afford"]},{id:"deposit",q:"Do you require a deposit?",a:"For larger projects, an agreed initial deposit may be required before work starts. Payment milestones are set according to the project scope.",keywords:["deposit","upfront","up front","advance payment","milestone"]},{id:"payment",q:"Which payment methods do you accept?",a:"M-Pesa for eligible Kenyan clients, bank transfers, international bank transfers, and other mutually agreed electronic payment methods. Exact payment instructions are shared directly when the project is confirmed.",keywords:["payment","pay","m-pesa","mpesa","bank","transfer","paypal","card","method"]},{id:"revisions",q:"Do you offer revisions?",a:"Yes. Reasonable revisions are available where deliverables don't meet the originally agreed specifications \u2014 typically up to two revision rounds for eligible projects. Requests that substantially change the original scope may need a separate quotation.",keywords:["revision","revisions","changes","amend","redo","not satisfied","correction"]},{id:"quality",q:"How do you ensure quality?",a:"Projects follow an agreed workflow: requirements assessment, data validation, appropriate analytical methods, quality checks and review of final deliverables. Where applicable, you also receive explanations of the methodology, procedures and interpretation of findings.",keywords:["quality","accurate","accuracy","reliable","trust","check"]},{id:"confidential",q:"Is my research data confidential?",a:"Yes. Client information, datasets, research materials and project discussions are treated as confidential and are never publicly disclosed without permission.",keywords:["confidential","confidentiality","private","privacy","secure","security","safe","nda","data protection"]},{id:"sensitive",q:"Can I share sensitive research datasets?",a:"Please only share information you're authorised to disclose, and remove or anonymise personal identifiers wherever possible. Project files are handled with care and not used for unrelated purposes.",keywords:["sensitive","personal data","anonymise","anonymize","identifiers","patient","share my data"]},{id:"portfolio-permission",q:"Do you publish client projects in your portfolio?",a:"Only with the client's explicit permission. Client confidentiality takes priority over portfolio promotion.",keywords:["publish client","showcase my","portfolio permission"]}],A={doNot:["Ghost-write entire Master's or PhD theses for students to submit as their own work.","Write academic assignments or examinations for submission under another person's name.","Fabricate research findings, datasets or statistical results.","Manipulate statistical outputs to produce predetermined conclusions.","Invent references, citations or research sources.","Guarantee academic grades, research approval or publication acceptance.","Participate in academic examination cheating."],doProvide:["Research methodology consultations","Statistical analysis guidance","Data cleaning and preparation","Questionnaire design guidance","Statistical interpretation","Python, R, SPSS and Stata programming support","Guidance on research findings and presentation","Technical support for reproducible research","Feedback on analytical methods and research outputs"],aim:"The objective is to help researchers understand their data, improve their analytical methods and develop independent research capabilities.",other:["Guarantee financial returns from Forex trading or investments.","Promise that any trading strategy will always be profitable.","Fabricate business performance statistics.","Misrepresent qualifications or professional experience.","Undertake projects involving illegal access to computer systems or unauthorised data.","Share confidential client information without permission."]},q=p.map(t=>t.name);var d={type:"start_enquiry",label:"Start a project enquiry"},y={type:"whatsapp",label:"Chat on WhatsApp"},E={type:"email",label:"Email Wicliff"},de=t=>` ${t.toLowerCase().replace(/[’`]/g,"'").replace(/[^a-z0-9'+\-\s/]/g," ").replace(/\s+/g," ").trim()} `,o=(t,...a)=>a.some(e=>f(t,e));function f(t,a){let e=a.trim();if(!e)return!1;let r=t.indexOf(e);if(r<0)return!1;let i=t[r-1],h=t[r+e.length],m=s=>s===void 0||!/[a-z0-9]/.test(s);return m(i)&&(m(h)||h==="s")}var X=t=>/^[A-Z][A-Z]/.test(t)?t:t.charAt(0).toLowerCase()+t.slice(1),z=t=>t.length<=1?t.join(""):`${t.slice(0,-1).join(", ")} and ${t[t.length-1]}`,ue={"masters-phd-support":6,"spss-stata":3,"generative-ai":4,"forex-quant-research":2};function pe(t){return p.map(a=>{var r;let e=0;for(let i of a.keywords)f(t,i)&&(e+=Math.min(i.trim().length,12));return f(t,a.name.toLowerCase())&&(e+=15),e>0&&(e+=(r=ue[a.slug])!=null?r:0),{service:a,score:e}}).filter(a=>a.score>0).sort((a,e)=>e.score-a.score)}function he(t){let a=t.replace(/ (option|options|asset|derivative|derivatives|bond) pricing/g," $1 valuation"),e=null;for(let r of K){let i=0;for(let h of r.keywords)f(a,h)&&(i+=h.length);i>0&&(!e||i>e.score)&&(e={faq:r,score:i})}return e}function b(t,a="I'd be happy to help with that."){return{text:`${a} Through our ${t.name} service, we provide ${z(t.involves.map(X))}.
+
+${t.followUp}`,service:t.slug,actions:[{...d,service:t.name},{type:"page",page:"services",label:"See all services"}],quickReplies:["How long does it take?","How much does it cost?","What do you need from me?"]}}var V=()=>`You can reach ${l.ownerFirstName} directly on WhatsApp (Kenya: +254 704 619 869${S?"":" \u2014 an international number is also listed on the Contact page"}) or by email at ${l.email}.`;function Z(t,a={}){var N,W,C,D;let e=de(t),r=a.lastService?p.find(n=>n.slug===a.lastService):void 0,i=n=>{var c;return{reply:n,ctx:{lastService:(c=n.service)!=null?c:a.lastService}}};if(o(e,"write my","write the whole","write an entire","do my","write for me","ghost")&&o(e,"thesis","dissertation","assignment","essay","exam","project for me","coursework","paper","proposal")||o(e,"take my exam","sit my exam","do my exam","fake data","fabricate","make up data","make up results","invent data","fake results","fake references","guarantee a pass","guarantee an a","guarantee my grade","guarantee distinction"))return i({text:`I should be upfront: we don't ghost-write theses or assignments for submission as someone else's work, fabricate data or results, invent references, or guarantee grades.
+
+What we do offer is genuine research support \u2014 ${z(A.doProvide.slice(0,6).map(X))}. ${A.aim}
+
+Would support like that help with your project?`,service:"masters-phd-support",actions:[{...d,label:"Enquire about research support",service:"Master's & PhD Research Support"}],quickReplies:["I Need Research Support","Speak to Wicliff"]});if(o(e,"guarantee","guaranteed","always profitable","sure profit","make me money","double my","signals that win")&&o(e,"profit","return","money","trading","forex","invest","win"))return i({text:`We don't guarantee financial returns or promise that any trading strategy will always be profitable \u2014 markets carry real risk. What we provide is rigorous, data-driven quantitative research: market-data analysis, strategy research and backtesting frameworks, and research dashboards.
+
+Would research support like that be useful?`,service:"forex-quant-research",actions:[{...d,service:"Forex & Quantitative Research"}]});if(o(e,"hack","crack password","bypass login","break into","scrape private","steal"))return i({text:"That's outside what we can help with \u2014 we don't undertake projects involving unauthorised access to systems or data. If you have a legitimate data or analytics need, I'd be glad to help you find the right service.",quickReplies:["Explore Your Services"]});if(/^ (hi|hello|hey|hallo|habari|jambo|good (morning|afternoon|evening))( there)?( wickie| wicliff)? $/.test(e))return i({text:"Hello! Great to have you here. Are you looking for help with data analysis, research support, programming, AI/ML or quantitative finance?",quickReplies:["Explore Your Services","I Need Data Analysis","I Need Research Support","Request a Quotation"]});if(/^ (thanks|thank you|thank you so much|asante|cheers|ok thanks|okay thanks)[ !.]*$/.test(e))return i({text:"You're very welcome! Is there anything else I can help you with?",quickReplies:["Request a Quotation","Speak to Wicliff"]});if(/^ (bye|goodbye|see you|that's all|no thanks|nothing else) $/.test(e))return i({text:`Thanks for visiting ${l.name}. Whenever you're ready, ${l.ownerFirstName} is just a WhatsApp message away.`,actions:[y]});if(o(e,"explore your services","your services","what services","list of services","what can you do","what do you offer","services do you","all services","services you")){let n=new Map;for(let w of p)n.set(w.category,[...(N=n.get(w.category))!=null?N:[],w.name]);let c=[...n].map(([w,ne])=>`\u2022 ${w}: ${ne.join(", ")}`).join(`
+`);return i({text:`Here's what we offer:
+
+${c}
+
+Which of these is closest to what you need?`,actions:[{type:"page",page:"services",label:"Open the Services page"}],quickReplies:["I Need Data Analysis","I Need Python/R Programming","I Need AI/ML Solutions","I Need Research Support"]})}if(o(e,"i need data analysis"))return i(b(p.find(n=>n.slug==="data-science-analytics"),"Great \u2014 data analysis is at the heart of what we do."));if(o(e,"i need python/r","python/r programming"))return i(b(p.find(n=>n.slug==="python-r-programming"),"Happy to help with Python and R."));if(o(e,"i need ai/ml","ai/ml"))return i({text:`We work across three areas here:
+
+\u2022 Machine Learning \u2014 predictive modelling, classification, regression, model evaluation and deployment.
+\u2022 Artificial Intelligence \u2014 practical AI applications for analytical problem-solving.
+\u2022 Generative AI \u2014 assistants and document tools built on large language models.
+
+Could you briefly describe the problem you want to solve?`,service:"machine-learning",actions:[{...d,service:"Machine Learning"}],quickReplies:["I need a machine learning model","I want a GenAI chatbot","How long does it take?"]});if(o(e,"i need research support"))return i(b(p.find(n=>n.slug==="masters-phd-support"),"I'd be happy to help you with research support."));if(o(e,"speak to wicliff","talk to wicliff","speak to a human","talk to a human","real person","contact","whatsapp","phone","call you","email address","reach you","your number","get in touch"))return i({text:`${V()}
+
+If you'd like, I can also take your project details now so ${l.ownerFirstName} has everything when he replies.`,actions:[y,E,d]});if(o(e,"request a quotation","get a quote","quotation","i want to hire","hire you","get started","start a project","submit an enquiry","submit enquiry","make an enquiry","book"))return i({text:`Of course. I'll ask a few quick questions \u2014 your name, email, WhatsApp number, the service, a short project description, your timeline and (optionally) a budget range \u2014 and send them to ${l.ownerFirstName} for a quotation. Nothing is stored until you review and agree at the end.`,actions:[{...d,label:"Start enquiry",service:r==null?void 0:r.name}]});let m=pe(e),s=(C=(W=m[0])==null?void 0:W.service)!=null?C:r,u=he(e);if((u==null?void 0:u.faq.id)==="timeline"&&s)return i({text:`For ${s.name}: ${s.timeline}
+
+These are estimates rather than guaranteed deadlines \u2014 you'll get a confirmed timeline once ${l.ownerFirstName} has reviewed your project.`,service:s.slug,actions:[{...d,service:s.name}]});if((u==null?void 0:u.faq.id)==="price")return i({text:`Our pricing depends on the complexity, scope and timeline of each project${s?` \u2014 for ${s.name}, that includes things like the amount of data and the deliverables you need`:""}. There's no fixed price list, but you'll always receive a quotation before any work begins.
+
+I can help you submit a project enquiry so ${l.ownerFirstName} can provide an appropriate quotation.`,service:s==null?void 0:s.slug,actions:[{...d,label:"Request a quotation",service:s==null?void 0:s.name},y]});if(o(e,"what do you need from me","what information","what do i need to provide","what should i send","what do you need","requirements from me"))return i(s?{text:`For ${s.name}, it helps to have:
+
+${s.clientProvides.map(n=>`\u2022 ${n}`).join(`
+`)}
+
+Don't worry if you don't have everything yet \u2014 a short description is enough to start.`,service:s.slug,actions:[{...d,service:s.name}]}:{text:"To prepare a quotation, it helps to know: the service you need, a short description of the project, any data you'll be working with (anonymised where possible), the deliverables you expect and your timeline. A brief description is enough to start.",actions:[d]});if(o(e,"qualification","qualified","education","degree","background","experience","who is wicliff","about wicliff","about you","credentials","worldquant","cv","resume","certificate","certification","certified")){let n=H.map(c=>`\u2022 ${c.title} \u2014 ${c.institution} (${c.dates})`).join(`
+`);return i({text:`${Q.short}
+
+${n}
+\u2022 ${I[0].role} at ${I[0].org} \u2014 quantitative research and Alpha development
+\u2022 Freelance data science and research analytics consultant
+
+For anything more specific, ${l.ownerFirstName} is happy to share further details directly.`,actions:[{type:"page",page:"about",label:"Read the full profile"}]})}if(o(e,"testimonial","reviews","references from clients","past clients","client list"))return i({text:`We don't publish client testimonials or client names on this site \u2014 client confidentiality comes first, and work is only showcased with explicit permission. You can see representative demonstration and independent research projects on the Portfolio page, and ${l.ownerFirstName} can talk you through relevant experience directly.`,actions:[{type:"page",page:"portfolio",label:"View portfolio"},y]});if(o(e,"portfolio","your projects","project examples","previous work","past work","examples","samples","sample work","work you've done"))return i({text:`Here are some representative projects (labelled as demonstration or independent research work):
+
+${_.slice(0,5).map(n=>`\u2022 ${n.title}`).join(`
+`)}
+
+\u2026and more on the Portfolio page.`,actions:[{type:"page",page:"portfolio",label:"View portfolio"}]});if(o(e,"how do you work","process","how does it work","steps","procedure","workflow","how do we start","how to start"))return i({text:`Here's how a project runs:
+
+${G.map((n,c)=>`${c+1}. ${n.stage} \u2014 ${n.text}`).join(`
+`)}`,actions:[d]});if(o(e,"software","tools","technologies","tech stack","languages","which programs"))return i({text:`Main tools and technologies:
+
+${Y.map(n=>`\u2022 ${n.area}: ${n.items.join(", ")}`).join(`
+`)}`});let g=(D=["spss","stata","python","excel","tableau","streamlit"].find(n=>f(e,n)))!=null?D:f(e,"r")||f(e,"rstudio")?"R":void 0;if(r&&g&&e.trim().split(" ").length<=4){let n=g.length<=2?g.toUpperCase():g==="spss"||g==="stata"?g.toUpperCase().replace("STATA","Stata"):g.charAt(0).toUpperCase()+g.slice(1);return i({text:`${n} works well \u2014 we use it regularly for ${r.name} work. The best next step is a short project enquiry so ${l.ownerFirstName} can review your requirements and send a quotation. Shall we do that now?`,service:r.slug,actions:[{...d,service:r.name},y]})}if(u&&(!m[0]||u.score>=m[0].score))return i({text:u.faq.a,actions:u.faq.id==="online"?[y,E]:void 0,quickReplies:["Request a Quotation","Explore Your Services"]});if(m[0]){let n=m[0].service,c=n.slug==="masters-phd-support"?"I'd be happy to help you understand our research analytics services.":n.slug==="machine-learning"?"We provide machine learning consultancy.":"I'd be happy to help with that.";return i(b(n,c))}return i({text:`That's a good question, and I don't want to give you an inaccurate answer. ${l.ownerFirstName} can clarify that for you directly. ${V()}`,actions:[y,E],quickReplies:["Explore Your Services","Request a Quotation"]})}var T={};F(T,{BUDGET_SKIP:()=>R,CONSENT_TEXT:()=>be,EMAIL_RE:()=>te,NOT_SURE:()=>ee,PHONE_RE:()=>ae,SUMMARY_FIELDS:()=>ie,TIMELINE_OPTIONS:()=>J,TRANSCRIPT_CONSENT_TEXT:()=>ke,enquiryAsText:()=>ve,flowAnswer:()=>fe,flowPrompt:()=>ye,isCancel:()=>we,startFlow:()=>me});var k=["name","email","whatsapp","service","description","timeline","budget","review"],J=["Within a week","1\u20132 weeks","2\u20134 weeks","1\u20133 months","Flexible"],R="Skip this question",ee="Not sure yet",te=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,ae=/^\+?[0-9\s\-()]{7,20}$/;function me(t){let a=t&&q.includes(t)?t:void 0;return{step:"name",data:a?{service:a}:{},prefilledService:!!a}}function ge(t){let a=k.indexOf(t.step)+1;for(;k[a]==="service"&&t.prefilledService;)a++;return k[Math.min(a,k.length-1)]}function ye(t){var e;let a=(e=t.data.name)==null?void 0:e.split(" ")[0];switch(t.step){case"name":return{text:`Great \u2014 let's get your enquiry to Wicliff. First, what's your full name?
+
+(You can type \u201Ccancel\u201D at any time.)`,placeholder:"Your full name"};case"email":return{text:`Thanks${a?`, ${a}`:""}. What's the best email address to reach you?`,placeholder:"name@example.com",inputMode:"email"};case"whatsapp":return{text:"And your WhatsApp number, including the country code?",placeholder:"+254 7XX XXX XXX",inputMode:"tel"};case"service":return{text:"Which service do you need?",quickReplies:[...q,ee]};case"description":return{text:"Briefly describe your project \u2014 what you need done and what data or materials you have. A few sentences is perfect.",placeholder:"Describe your project\u2026"};case"timeline":return{text:"When would you ideally like this completed?",quickReplies:J,placeholder:"e.g. by 15 December"};case"budget":return{text:"Do you have a budget range in mind? This is optional.",quickReplies:[R],placeholder:"e.g. KES 15,000\u201325,000 or \xA3200\u2013300"};case"review":return{text:"Here's a summary of your enquiry. Please check it, then confirm below."}}}function fe(t,a){let e=a.trim(),r=i=>{let h={...t,data:{...t.data,...i}};return{state:{...h,step:ge(h)}}};switch(t.step){case"name":return e.length<2||e.length>100||!/[a-zA-ZÀ-ɏ]/.test(e)?{state:t,error:"Please enter your full name (2\u2013100 characters)."}:r({name:e});case"email":return!te.test(e)||e.length>200?{state:t,error:"That doesn't look like a valid email address \u2014 could you check it?"}:r({email:e.toLowerCase()});case"whatsapp":{let i=e.replace(/\D/g,"");return!ae.test(e)||i.length<7||i.length>15?{state:t,error:"Please enter a valid WhatsApp number with its country code, e.g. +254 712 345 678."}:r({whatsapp:e})}case"service":return e.length<2||e.length>120?{state:t,error:"Please choose a service from the list, or type it in."}:r({service:e});case"description":return e.length<10?{state:t,error:"Could you add a little more detail? At least a sentence helps Wicliff prepare an accurate quotation."}:e.length>2e3?{state:t,error:"That's a bit long for the chat \u2014 please keep it under 2,000 characters. You can share files later."}:r({description:e});case"timeline":return e.length<2||e.length>100?{state:t,error:"Please give a rough timeline, or pick an option."}:r({timeline:e});case"budget":return e.length>100?{state:t,error:"Please keep the budget range short (under 100 characters)."}:r({budget:e===R?"":e});case"review":return{state:t}}}var we=t=>/^(cancel|stop|exit|quit|nevermind|never mind)$/i.test(t.trim()),ie=[{key:"name",label:"Full name"},{key:"email",label:"Email"},{key:"whatsapp",label:"WhatsApp"},{key:"service",label:"Service"},{key:"description",label:"Project"},{key:"timeline",label:"Timeline"},{key:"budget",label:"Budget"}];function ve(t){return["Hello Wicliff, I'd like to request a quotation.","",...ie.map(a=>`${a.label}: ${t[a.key]||(a.key==="budget"?"Not specified":"\u2014")}`)].join(`
+`)}var be="I agree that Wickie Stat Consultancy may store and use these details to respond to my enquiry, as described in the Privacy notice.",ke="Also include this chat conversation with my enquiry (optional).";window.WSC={config:x,demoReply:Z,flow:T,SERVICES:p,QUICK_REPLIES:O,WELCOME_MESSAGE:B};})();
+</script>
+<script>/* Preview chat widget (vanilla JS). Mirrors src/components/ChatWidget.tsx. */
+(function () {
+  var W = window.WSC, C = W.config, F = W.flow;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var el = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  var fab = $("#chat-fab"), panel = $("#chat-panel"), log = $("#chat-log"), quick = $("#chat-quick"), form = $("#chat-form"), input = $("#chat-text");
+  var state = { ctx: {}, flow: null, busy: false, service: null };
+  var PAGE_ANCHOR = { home: "#top", services: "#services", portfolio: "#portfolio", about: "#about", contact: "#contact", privacy: "#privacy" };
+
+  function scroll() { log.scrollTop = log.scrollHeight; }
+  function setQuick(items, wrap) {
+    quick.innerHTML = ""; quick.hidden = !items || !items.length; quick.classList.toggle("wrap-q", !!wrap);
+    (items || []).forEach(function (q) { var b = el("button", null, q); b.type = "button"; b.onclick = function () { send(q); }; quick.appendChild(b); });
+  }
+  function waText() {
+    if (state.flow && Object.keys(state.flow.data).length > 1) return F.enquiryAsText(state.flow.data);
+    var s = W.SERVICES.find(function (x) { return x.slug === state.service; });
+    return "Hello Wicliff, I found Wickie Stat Consultancy online" + (s ? " and I'm interested in " + s.name : "") + ". I'd like to discuss a project.";
+  }
+  function actionsEl(actions) {
+    var box = el("div", "msg-actions");
+    actions.forEach(function (a) {
+      if (a.type === "start_enquiry") { var b = el("button", "primary", a.label); b.type = "button"; b.onclick = function () { if (!state.flow && !state.busy) begin(a.service); }; box.appendChild(b); }
+      else if (a.type === "page") { var p = el("button", null, a.label + " →"); p.type = "button"; p.onclick = function () { location.hash = PAGE_ANCHOR[a.page] || "#top"; if (innerWidth < 520) minimise(true); }; box.appendChild(p); }
+      else if (a.type === "whatsapp") { C.ACTIVE_WHATSAPP_LINES.forEach(function (l) { var w = el("a", "wa", a.label); w.href = C.whatsappLink(l, waText()); w.target = "_blank"; w.rel = "noopener noreferrer"; box.appendChild(w); }); }
+      else if (a.type === "email") { var c = el("button", null, "Copy email address"); c.type = "button"; c.onclick = function () { copy(C.BUSINESS.email, c, "Email copied"); }; box.appendChild(c); }
+    });
+    return box;
+  }
+  function add(role, text, opts) {
+    opts = opts || {};
+    var m = el("div", "msg " + (role === "user" ? "user" : "bot") + (opts.tone ? " " + opts.tone : ""));
+    m.appendChild(el("div", "bubble", text));
+    if (opts.extra) m.appendChild(opts.extra);
+    if (opts.actions && opts.actions.length) m.appendChild(actionsEl(opts.actions));
+    log.appendChild(m); scroll(); return m;
+  }
+  function typing(on) {
+    var t = $(".typing", log); if (t) t.remove();
+    if (on) { t = el("div", "typing"); t.setAttribute("aria-label", "Assistant is typing"); t.innerHTML = "<i></i><i></i><i></i>"; log.appendChild(t); scroll(); }
+  }
+  function bot(text, opts, delay) {
+    state.busy = true; typing(true); setQuick([]);
+    return new Promise(function (res) { setTimeout(function () { typing(false); state.busy = false; var m = add("assistant", text, opts); res(m); }, delay == null ? 520 : delay); });
+  }
+  function copy(text, btn, done) {
+    var old = btn.textContent;
+    var ok = function () { btn.textContent = done; setTimeout(function () { btn.textContent = old; }, 1800); };
+    try { navigator.clipboard.writeText(text).then(ok, function () { fallback(); }); } catch (e) { fallback(); }
+    function fallback() { var ta = el("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); ok(); } catch (e) {} ta.remove(); }
+  }
+
+  // ── Enquiry flow ──
+  function prompt() { var p = F.flowPrompt(state.flow); input.placeholder = p.placeholder || "Type your answer…"; input.setAttribute("inputmode", p.inputMode || "text"); return p; }
+  function begin(service) {
+    var s = service || (W.SERVICES.find(function (x) { return x.slug === state.service; }) || {}).name;
+    state.flow = F.startFlow(s);
+    var p = prompt();
+    bot(p.text).then(function () { setQuick(p.quickReplies || []); input.focus(); });
+  }
+  function cancel() {
+    state.flow = null; input.disabled = false; input.placeholder = "Type your message…";
+    var r = $(".review-card", log); if (r) r.closest(".msg").remove();
+    bot("No problem — I've cancelled that enquiry and discarded the details. Is there anything else I can help with?").then(function () { setQuick(W.QUICK_REPLIES); });
+  }
+  function review() {
+    var d = state.flow.data, card = el("div", "review-card"), dl = el("dl");
+    F.SUMMARY_FIELDS.forEach(function (f) { dl.appendChild(el("dt", null, f.label)); dl.appendChild(el("dd", null, d[f.key] || (f.key === "budget" ? "Not specified" : "—"))); });
+    card.appendChild(dl);
+    var lab = el("label", "check"), cb = el("input"); cb.type = "checkbox"; cb.id = "consent-" + Date.now();
+    lab.appendChild(cb); var sp = el("span", null, F.CONSENT_TEXT.replace("Privacy notice.", "")); var a = el("a", null, "Privacy notice"); a.href = "#privacy"; sp.appendChild(a); sp.appendChild(document.createTextNode(".")); lab.appendChild(sp);
+    card.appendChild(lab);
+    var btns = el("div", "btns"), sub = el("button", "primary", "Continue"), over = el("button", null, "Start over"), can = el("button", null, "Cancel");
+    [sub, over, can].forEach(function (b) { b.type = "button"; btns.appendChild(b); });
+    sub.disabled = true; cb.onchange = function () { sub.disabled = !cb.checked; };
+    sub.onclick = function () { card.closest(".msg").remove(); finish(); };
+    over.onclick = function () { card.closest(".msg").remove(); begin(state.flow.data.service); };
+    can.onclick = cancel;
+    card.appendChild(btns);
+    input.disabled = true;
+    bot(F.flowPrompt(state.flow).text, { extra: card }, 350);
+  }
+  function finish() {
+    // The preview has no server, so it never claims submission: it hands the visitor a pre-filled message to send themselves.
+    var text = F.enquiryAsText(state.flow.data), box = el("div", "msg-actions");
+    C.ACTIVE_WHATSAPP_LINES.forEach(function (l) { var w = el("a", "primary wa-solid", "Send on WhatsApp"); w.href = C.whatsappLink(l, text); w.target = "_blank"; w.rel = "noopener noreferrer"; box.appendChild(w); });
+    var c = el("button", null, "Copy details"); c.type = "button"; c.onclick = function () { copy(text, c, "Copied"); }; box.appendChild(c);
+    bot("This preview can't submit enquiries online, so your details have not been sent yet.\n\nTap “Send on WhatsApp” to open a message to Wicliff with everything filled in, or copy the details and email them to " + C.BUSINESS.email + ".", { extra: box }).then(function () {
+      state.flow = null; input.disabled = false; input.placeholder = "Type your message…"; setQuick(["Explore Your Services", "Speak to Wicliff"]);
+    });
+  }
+  function flowInput(text) {
+    add("user", text);
+    if (F.isCancel(text)) return cancel();
+    var r = F.flowAnswer(state.flow, text);
+    if (r.error) return bot(r.error, { tone: "error" }, 280).then(function () { setQuick(F.flowPrompt(state.flow).quickReplies || []); });
+    state.flow = r.state;
+    if (state.flow.step === "review") return review();
+    var p = prompt();
+    bot(p.text, null, 320).then(function () { setQuick(p.quickReplies || [], state.flow && state.flow.step === "service"); });
+  }
+
+  function send(raw) {
+    var text = (raw || "").trim(); if (!text || state.busy) return;
+    input.value = ""; autosize();
+    if (state.flow && state.flow.step !== "review") return flowInput(text);
+    if (state.flow) return;
+    if (/^(request a quotation|get a quote)$/i.test(text)) { add("user", text); return begin(); }
+    add("user", text);
+    var out = W.demoReply(text, state.ctx); state.ctx = out.ctx;
+    if (out.reply.service) state.service = out.reply.service;
+    bot(out.reply.text, { actions: out.reply.actions }, 500 + Math.min(out.reply.text.length, 600)).then(function () {
+      setQuick(out.reply.quickReplies && out.reply.quickReplies.length ? out.reply.quickReplies : W.QUICK_REPLIES);
+    });
+  }
+
+  // ── Panel controls ──
+  function open() { fab.hidden = true; panel.hidden = false; panel.classList.remove("closing", "minimised"); setTimeout(function () { input.focus(); }, 250); scroll(); }
+  function close() { panel.classList.add("closing"); setTimeout(function () { panel.hidden = true; panel.classList.remove("closing"); fab.hidden = false; }, 190); }
+  function minimise(force) { var m = force === true ? true : !panel.classList.contains("minimised"); panel.classList.toggle("minimised", m); $("#chat-min").setAttribute("aria-label", m ? "Restore chat" : "Minimise chat"); $("#chat-min").innerHTML = m ? ICON_RESTORE : ICON_MIN; $("#chat-max").hidden = m; }
+  function maximise() { var on = panel.classList.toggle("maximised"); $("#chat-max").setAttribute("aria-label", on ? "Restore chat size" : "Maximise chat"); $("#chat-max").innerHTML = on ? ICON_RESTORE : ICON_MAX; }
+  var ICON_MIN = $("#chat-min").innerHTML, ICON_MAX = $("#chat-max").innerHTML, ICON_RESTORE = $("#icon-restore").innerHTML;
+  function autosize() { input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 120) + "px"; }
+
+  fab.onclick = open;
+  $("#chat-close").onclick = close;
+  $("#chat-min").onclick = minimise;
+  $("#chat-max").onclick = maximise;
+  $(".chat-head").ondblclick = function (e) { if (e.target.closest("button")) return; minimise(); };
+  form.onsubmit = function (e) { e.preventDefault(); send(input.value); };
+  input.oninput = autosize;
+  input.onkeydown = function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input.value); } };
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !panel.hidden) close(); });
+  document.querySelectorAll("[data-chat]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      open();
+      var msg = b.getAttribute("data-chat"), enq = b.getAttribute("data-enquiry");
+      setTimeout(function () { if (enq !== null) { if (!state.flow && !state.busy) { add("user", "I'd like to make an enquiry" + (enq ? " about " + enq : "")); begin(enq || undefined); } } else if (msg) send(msg); }, 300);
+    });
+  });
+
+  add("assistant", W.WELCOME_MESSAGE);
+  setQuick(W.QUICK_REPLIES);
+})();
+</script>
+<script>
+(function () {
+  var C = window.WSC.config, F = window.WSC.flow;
+  document.querySelectorAll("[data-copy]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var t = b.getAttribute("data-copy"), old = b.textContent;
+      var ok = function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = old; }, 1600); };
+      try { navigator.clipboard.writeText(t).then(ok, function () {}); } catch (e) {}
+    });
+  });
+  var form = document.getElementById("enquiry-form"), msg = document.getElementById("form-msg");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var v = function (id) { return document.getElementById(id).value.trim(); };
+    var d = { name: v("f-name"), email: v("f-email"), whatsapp: v("f-whatsapp"), service: v("f-service"), description: v("f-description"), timeline: v("f-timeline"), budget: v("f-budget") };
+    var err = d.name.length < 2 ? "Please enter your full name." : !F.EMAIL_RE.test(d.email) ? "Please enter a valid email address." : !F.PHONE_RE.test(d.whatsapp) ? "Please enter a WhatsApp number with its country code." : !d.service ? "Please choose a service." : d.description.length < 10 ? "Please describe your project in a sentence or two." : !d.timeline ? "Please give a rough timeline." : !document.getElementById("f-consent").checked ? "Please tick the consent box so we can process your enquiry." : "";
+    msg.innerHTML = "";
+    var box = document.createElement("div");
+    if (err) { box.className = "notice err"; box.textContent = err; msg.appendChild(box); return; }
+    box.className = "notice ok";
+    var text = F.enquiryAsText(d);
+    box.innerHTML = "<b>This preview can't submit enquiries online, so nothing has been sent yet.</b> On the live site this form delivers straight to Wicliff. To send these details now, open WhatsApp with the message filled in: ";
+    C.ACTIVE_WHATSAPP_LINES.forEach(function (l) { var a = document.createElement("a"); a.href = C.whatsappLink(l, text); a.target = "_blank"; a.rel = "noopener noreferrer"; a.textContent = "Send on WhatsApp"; box.appendChild(a); });
+    msg.appendChild(box);
+  });
+})();
+</script>
